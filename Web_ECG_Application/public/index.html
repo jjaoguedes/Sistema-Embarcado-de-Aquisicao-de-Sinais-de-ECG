@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECG Monitor em Tempo Real</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .chart-container {
+      width: 100vw;
+      height: 590px;
+      overflow-x: hidden;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background-color: #1c1c1c; /* Fundo escuro */
+    }
+    #ecgChart {
+      width: unset;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>ECG Monitor</h1>
+  <div class="chart-container">
+    <canvas id="ecgChart"></canvas>
+  </div>
+
+  <script>
+    const samplingRate = 360; // Frequência de amostragem em Hz
+    const maxSamples = 720; // Número máximo de amostras exibidas no gráfico
+    const ctx = document.getElementById('ecgChart').getContext('2d');
+    const ecgChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'ECG',
+          data: [],
+          borderColor: '#FFFFFF',
+          borderWidth: 1.5,
+          fill: false,
+          pointRadius: 0,
+        }]
+      },
+      options: {
+        animation: {
+          duration: 0
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            type: 'linear',
+            title: {
+              display: false
+            },
+            grid: {
+              color: '#FFFFFF',
+              lineWidth: 0.0
+            },
+            ticks: {
+              color: '#FFFFFF',
+            }
+          },
+          x: {
+            title: {
+              display: false
+            },
+            min: 0,
+            max: maxSamples,
+            ticks: {
+              color: '#FFFFFF',
+              display: false // Oculta os rótulos para maior realismo
+            },
+            grid: {
+              color: '#FFFFFF',
+              lineWidth: 0.0
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        layout: {
+          padding: 10
+        },
+        elements: {
+          line: {
+            tension: 0 // Linha reta para ECG
+          }
+        }
+      }
+    });
+
+    async function updateChart() {
+    try {
+        const response = await fetch('/ecg');
+        const ecgData = await response.json();
+        
+        if (ecgData.length > 0) {
+            ecgChart.data.labels.push('');
+            ecgChart.data.datasets[0].data.push(ecgData[ecgData.length - 1]);
+
+            if (ecgChart.data.labels.length > maxSamples) {
+                ecgChart.data.labels.shift();
+                ecgChart.data.datasets[0].data.shift();
+            }
+
+            ecgChart.update();
+        }
+    } catch (error) {
+        console.error('Erro ao buscar dados de ECG:', error);
+    }
+}
+
+// Ajusta o intervalo de atualização para a taxa de amostragem
+setInterval(updateChart, 1000 / samplingRate);
+
+  </script>
+</body>
+</html>
