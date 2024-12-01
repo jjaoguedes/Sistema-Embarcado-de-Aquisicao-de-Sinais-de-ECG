@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Predição de Iris-setosa, Iris-versicolor e Iris-virginica </title>
+</head>
+<body>
+  <h1>Predição de Iris-setosa, Iris-versicolor e Iris-virginica</h1>
+  <form id="data-form">
+    <label for="sepal_length">Sepal Length:</label>
+    <input type="number" id="sepal_length" name="sepal_length" value="" step="0.1"><br><br>
+    
+    <label for="sepal_width">Sepal Width:</label>
+    <input type="number" id="sepal_width" name="sepal_width" value="" step="0.1"><br><br>
+    
+    <label for="petal_length">Petal Length:</label>
+    <input type="number" id="petal_length" name="petal_length" value="" step="0.1"><br><br>
+    
+    <label for="petal_width">Petal Width:</label>
+    <input type="number" id="petal_width" name="petal_width" value="" step="0.1"><br><br>
+    
+    <button type="button" onclick="sendData()">Enviar Dados</button>
+  </form>
+
+  <h2 id="result"></h2>
+
+  <script>
+    function sendData() {
+  const data = [
+    parseFloat(document.getElementById("sepal_length").value),
+    parseFloat(document.getElementById("sepal_width").value),
+    parseFloat(document.getElementById("petal_length").value),
+    parseFloat(document.getElementById("petal_width").value)
+  ];
+
+  fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Web_Model_IA_Iris/process.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),  // Envia apenas os valores como array
+  })
+  .then(response => response.json())  // Espera uma resposta JSON
+  .then(result => {
+    // Manipula a resposta JSON
+    const classePredita = result.classe_predita;  // Classe predita
+    const probabilidades = result.probabilidades;  // Probabilidades
+
+    let output = `<h2>Resultado:</h2>`;
+    output += `<p><strong>Classe Predita:</strong> ${classePredita}</p>`;
+    output += `<p><strong>Probabilidades:</strong></p><ul>`;
+
+    // Exibe as probabilidades de cada classe
+    probabilidades.forEach((item) => {
+      output += `<li>${item.classe}: ${item.probabilidade}%</li>`;
+    });
+
+    output += "</ul>";
+    document.getElementById('result').innerHTML = output;
+  })
+  .catch(error => {
+    console.error('Erro:', error);
+  });
+}
+  </script>
+</body>
+</html>
