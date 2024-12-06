@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECG Monitor em Tempo Real</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .chart-container {
+      width: 100vw;
+      height: 590px;
+      overflow-x: hidden;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background-color: #1c1c1c;
+      /* Fundo escuro */
+    }
+
+    #ecgChart {
+      width: unset;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>ECG Monitor</h1>
+
+  <!-- Seletor de Paciente -->
+  <label for="patient-select">Selecione um Paciente:</label>
+  <select id="patient-select" onchange="onPatientChange()">
+    <option value="">Carregando pacientes...</option>
+  </select>
+
+  <!-- Botão para carregar dados -->
+  <div class="button-container">
+    <button id="fetch-ecg-btn" enabled>Carregar ECG</button>
+    <button id="continue-btn" disabled>Continuar Exibição</button>
+  </div>
+
+
+  <div class="chart-container">
+    <canvas id="ecgChart"></canvas>
+  </div>
+
+  <script>
+    let patientSelect = document.getElementById('patient-select');
+    let shouldStop = false; // Controla a interrupção
+    let isPaused = false; // Controla se o gráfico está pausado
+    const samplingRate = 360; // Frequência de amostragem em Hz
+    const maxSamples = 1600; // Número máximo de amostras exibidas no gráfico
+    const continueButton = document.getElementById("continue-btn");
+    const ctx = document.getElementById('ecgChart').getContext('2d');
+    const ecgChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'ECG',
+          data: [],
+          borderColor: '#FFFFFF',
+          borderWidth: 1.5,
+          fill: false,
+          pointRadius: 0,
+        }]
+      },
+      options: {
+        animation: {
+          duration: 0
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            type: 'linear',
+            title: {
+              display: false
+            },
+            grid: {
+              color: '#FFFFFF',
+              lineWidth: 0.0
+            },
+            ticks: {
+              color: '#FFFFFF',
+            }
+          },
+          x: {
+            title: {
+              display: false
+            },
+            min: 0,
+            max: maxSamples,
+            ticks: {
+              color: '#FFFFFF',
+              display: false // Oculta os rótulos para maior realismo
+            },
+            grid: {
+              color: '#FFFFFF',
+              lineWidth: 0.0
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        layout: {
+          padding: 10
+        },
+        elements: {
+          line: {
+            tension: 0 // Linha reta para ECG
+          }
+        }
+      }
+    });
+
+    // Função para carregar pacientes na lista de seleção
+    async function loadPatients() {
+      patientSelect = document.getElementById('patient-select');
+
+      try {
+        const response = await fetch('../api2/get_patients.php'); // Endpoint correto
+        if (!response.ok) {
+          throw new Error('Erro ao carregar pacientes.');
+        }
+
+        const patients = await response.json();
+        patientSelect.innerHTML = '<option value="">Selecione um paciente</option>';
+
+        if (patients.length > 0) {
+          patients.forEach(patient => {
+            const option = document.createElement('option');
+            option.value = patient.id_patient; // Define o ID do paciente como valor
+            option.textContent = `${patient.name} (${patient.age} anos)`;
+            patientSelect.appendChild(option);
+          });
+
+        } else {
+          patientSelect.innerHTML = '<option value="">Nenhum paciente encontrado</option>';
+        }
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+        patientSelect.innerHTML = '<option value="">Erro ao carregar pacientes</option>';
+      }
+    }
+
+    // Chamar a função de carregamento quando a página for carregada
+    window.onload = loadPatients;
+
+    const fetchButton = document.getElementById('fetch-ecg-btn');
+
+    continueButton.addEventListener("click", () => {
+      isPaused = false; // Retira o estado de pausa
+      continueButton.disabled = true; // Desativa o botão novamente
+      console.log("Continuação da exibição iniciada.");
+    });
+
+    // Adiciona evento ao botão
+    fetchButton.addEventListener('click', () => {
+      patientSelect = document.getElementById('patient-select');
+      const patientId = patientSelect.value;
+
+      if (patientId) {
+        console.log(`Iniciando plotagem para o paciente ID ${patientId}`);
+        shouldStop = false;
+        fetchAndPlotECG(patientId);
+      } else {
+        alert('Por favor, selecione um paciente primeiro.');
+      }
+    });
+
+    // Atualizar o gráfico ao selecionar um paciente
+    function onPatientChange() {
+      patientSelect = document.getElementById("patient-select");
+      const selectedPatient = patientSelect.value;
+      continueButton.disabled = true; // Desativa o botão novamente 
+
+      if (selectedPatient) {
+        console.log(
+          `Paciente ID ${selectedPatient} selecionado. Gráfico limpo. Clique no botão para iniciar a plotagem.`
+        );
+
+        shouldStop = true; // Interrompe a execução atual
+        ecgChart.data.labels = [];
+        ecgChart.data.datasets[0].data = [];
+        ecgChart.update();
+      } else {
+        console.log("Nenhum paciente selecionado.");
+      }
+    }
+
+
+    // Buscar e plotar os dados de ECG
+    async function fetchAndPlotECG(patientId) {
+  try {
+    const response = await fetch(`../api2/get_ecg.php?patient_id=${patientId}`);
+    const ecgData = await response.json();
+
+    if (ecgData.length > 0) {
+      let currentIndex = 0;
+
+      const plotInterval = setInterval(() => {
+        if (shouldStop) {
+          console.log("Plotagem interrompida.");
+          clearInterval(plotInterval);
+          return;
+        }
+
+        if (isPaused) {
+          console.log("Gráfico pausado. Aguardando comando para continuar.");
+          return; // Não executa o restante enquanto está pausado
+        }
+
+        if (currentIndex < ecgData.length) {
+          const newTime = currentIndex / samplingRate;
+          const newValue = ecgData[currentIndex].value;
+
+          ecgChart.data.labels.push(newTime);
+          ecgChart.data.datasets[0].data.push(newValue);
+
+          // Remove valores antigos quando excede o máximo
+          if (ecgChart.data.labels.length > maxSamples) {
+            ecgChart.data.labels.shift();
+            ecgChart.data.datasets[0].data.shift();
+          }
+
+          ecgChart.update();
+          currentIndex++;
+
+          // Pausa automaticamente após 1600 amostras
+          if (currentIndex % maxSamples === 0) {
+            isPaused = true; // Ativa a pausa
+            continueButton.disabled = false; // Habilita o botão para continuar
+            console.log(`Exibição pausada após ${maxSamples} amostras.`);
+          }
+        } else {
+          clearInterval(plotInterval);
+          console.log("Plotagem concluída.");
+        }
+      }, 1000 / samplingRate);
+    } else {
+      console.log("Nenhum dado de ECG encontrado para este paciente.");
+      ecgChart.data.labels = [];
+      ecgChart.data.datasets[0].data = [];
+      ecgChart.update();
+    }
+  } catch (error) {
+    console.error("Erro ao buscar dados de ECG:", error);
+  }
+}
+
+
+
+
+  </script>
+</body>
+
+</html>
