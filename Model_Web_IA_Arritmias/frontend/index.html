@@ -48,6 +48,7 @@
     let patientSelect = document.getElementById('patient-select');
     let shouldStop = false; // Controla a interrupção
     let isPaused = false; // Controla se o gráfico está pausado
+    let displayedData = []; // Array para armazenar os dados exibidos no gráfico
     const samplingRate = 360; // Frequência de amostragem em Hz
     const maxSamples = 1600; // Número máximo de amostras exibidas no gráfico
     const continueButton = document.getElementById("continue-btn");
@@ -192,71 +193,103 @@
       }
     }
 
+    // Função para enviar os dados ao servidor PHP
+    async function sendDataToServer(data) {
+      try {
+        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/save_ecg.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ ecgData: data }) // Enviar os dados como JSON
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao enviar os dados ao servidor.');
+        }
+
+        const result = await response.json();
+        console.log('Dados enviados com sucesso:', result);
+      } catch (error) {
+        console.error('Erro ao enviar os dados:', error);
+      }
+    }
+
 
     // Buscar e plotar os dados de ECG
     async function fetchAndPlotECG(patientId) {
-  try {
-    const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ patient_id: patientId })
-});
-const ecgData = await response.json();
+      try {
+        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ patient_id: patientId })
+        });
+        const ecgData = await response.json();
 
-    if (ecgData.length > 0) {
-      let currentIndex = 0;
+        if (ecgData.length > 0) {
+          let currentIndex = 0;
 
-      const plotInterval = setInterval(() => {
-        if (shouldStop) {
-          console.log("Plotagem interrompida.");
-          clearInterval(plotInterval);
-          return;
-        }
+          const plotInterval = setInterval(() => {
+            if (shouldStop) {
+              console.log("Plotagem interrompida.");
+              clearInterval(plotInterval);
+              return;
+            }
 
-        if (isPaused) {
-          console.log("Gráfico pausado. Aguardando comando para continuar.");
-          return; // Não executa o restante enquanto está pausado
-        }
+            if (isPaused) {
+              console.log("Gráfico pausado. Aguardando comando para continuar.");
+              return; // Não executa o restante enquanto está pausado
+            }
 
-        if (currentIndex < ecgData.length) {
-          const newTime = currentIndex / samplingRate;
-          const newValue = ecgData[currentIndex].value;
+            if (currentIndex < ecgData.length) {
+              const newTime = currentIndex / samplingRate;
+              const newValue = ecgData[currentIndex].value;
 
-          ecgChart.data.labels.push(newTime);
-          ecgChart.data.datasets[0].data.push(newValue);
+              ecgChart.data.labels.push(newTime);
+              ecgChart.data.datasets[0].data.push(newValue);
 
-          // Remove valores antigos quando excede o máximo
-          if (ecgChart.data.labels.length > maxSamples) {
-            ecgChart.data.labels.shift();
-            ecgChart.data.datasets[0].data.shift();
-          }
+              // Adicionar o dado exibido ao array
+              displayedData.push(newValue);
 
-          ecgChart.update();
-          currentIndex++;
 
-          // Pausa automaticamente após 1600 amostras
-          if (currentIndex % maxSamples === 0) {
-            isPaused = true; // Ativa a pausa
-            continueButton.disabled = false; // Habilita o botão para continuar
-            console.log(`Exibição pausada após ${maxSamples} amostras.`);
-          }
+              // Remove valores antigos quando excede o máximo
+              if (ecgChart.data.labels.length > maxSamples) {
+                ecgChart.data.labels.shift();
+                ecgChart.data.datasets[0].data.shift();
+              }
+
+              ecgChart.update();
+              currentIndex++;
+
+              // Pausa automaticamente após 1600 amostras
+              if (currentIndex % maxSamples === 0) {
+                isPaused = true; // Ativa a pausa
+                continueButton.disabled = false; // Habilita o botão para continuar
+                console.log(`Exibição pausada após ${maxSamples} amostras.`);
+
+                // Enviar os dados ao servidor
+                sendDataToServer(displayedData);
+
+                // Limpar o array de dados exibidos
+                displayedData = [];
+              }
+            } else {
+              clearInterval(plotInterval);
+              console.log("Plotagem concluída.");
+            }
+          }, 1000 / samplingRate);
         } else {
-          clearInterval(plotInterval);
-          console.log("Plotagem concluída.");
+          console.log("Nenhum dado de ECG encontrado para este paciente.");
+          ecgChart.data.labels = [];
+          ecgChart.data.datasets[0].data = [];
+          ecgChart.update();
         }
-      }, 1000 / samplingRate);
-    } else {
-      console.log("Nenhum dado de ECG encontrado para este paciente.");
-      ecgChart.data.labels = [];
-      ecgChart.data.datasets[0].data = [];
-      ecgChart.update();
+      } catch (error) {
+        console.error("Erro ao buscar dados de ECG:", error);
+      }
     }
-  } catch (error) {
-    console.error("Erro ao buscar dados de ECG:", error);
-  }
-}
 
 
 
