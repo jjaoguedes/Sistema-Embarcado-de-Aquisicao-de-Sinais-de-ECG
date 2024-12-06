@@ -122,7 +122,7 @@
       patientSelect = document.getElementById('patient-select');
 
       try {
-        const response = await fetch('../api2/get_patients.php'); // Endpoint correto
+        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_patients.php'); // Endpoint correto
         if (!response.ok) {
           throw new Error('Erro ao carregar pacientes.');
         }
@@ -196,8 +196,14 @@
     // Buscar e plotar os dados de ECG
     async function fetchAndPlotECG(patientId) {
   try {
-    const response = await fetch(`../api2/get_ecg.php?patient_id=${patientId}`);
-    const ecgData = await response.json();
+    const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ patient_id: patientId })
+});
+const ecgData = await response.json();
 
     if (ecgData.length > 0) {
       let currentIndex = 0;

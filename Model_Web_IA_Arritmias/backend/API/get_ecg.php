@@ -1,6 +1,16 @@
 <?php
 header('Content-Type: application/json');
 
+// Receber e decodificar o corpo da requisição
+$data = json_decode(file_get_contents('php://input'), true);
+$patient_id = isset($data['patient_id']) ? intval($data['patient_id']) : 0;
+
+// Verificar se o patient_id é válido
+if ($patient_id <= 0) {
+    echo json_encode(["error" => "ID do paciente inválido."]);
+    exit;
+}
+
 // Configurações do banco de dados
 $host = "localhost";
 $username = "root"; // Altere conforme necessário
@@ -17,14 +27,6 @@ try {
 } catch (Exception $e) {
     die(json_encode(["error" => "Erro ao conectar com o banco de dados: " . $e->getMessage()]));
 }
-
-// Verifica se o ID do paciente foi enviado
-if (!isset($_GET['patient_id'])) {
-    echo json_encode(["error" => "Parâmetro patient_id é obrigatório."]);
-    exit;
-}
-
-$patient_id = intval($_GET['patient_id']); // Sanitiza o input para evitar SQL injection
 
 // Consulta para buscar os dados de ECG com base no ID do paciente
 $sql = "SELECT time, value FROM ecg WHERE id_patient = ?";
