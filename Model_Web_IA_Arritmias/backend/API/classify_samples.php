@@ -62,5 +62,9 @@ $response = [
 // Log para debug
 #file_put_contents('php://stderr', print_r($response, true));
 
+ // Envia a resposta como JSON
+ header('Content-Type: application/json');
+ echo json_encode($response);  // Retorna a resposta JSON para o frontend
+
 // Opcional: Deletar o arquivo temporário após o uso
 unlink($temp_file);
