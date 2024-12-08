@@ -196,7 +196,7 @@
     // Função para enviar os dados ao servidor PHP
     async function sendDataToServer(data) {
       try {
-        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/save_ecg.php', {
+        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/classify_samples.php', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

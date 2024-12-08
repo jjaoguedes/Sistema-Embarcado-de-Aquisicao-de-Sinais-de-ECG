@@ -1,0 +1,60 @@
+import sys
+import json
+import tensorflow as tf
+import numpy as np
+
+# Lê os dados da entrada
+temp_file_path = sys.argv[1]
+
+try:
+    with open(temp_file_path, 'r') as file:
+        data = json.load(file)
+
+    numeric_value = data["ecgData"]  # Acessa o valor numérico
+
+    # Converte os dados para um array NumPy
+    array = np.array(numeric_value, dtype=float)
+
+    # Ajusta a forma do array para o modelo
+    array = np.expand_dims(array, axis=-1)
+    array = np.expand_dims(array, axis=0)
+
+    # Tenta carregar o modelo
+    try:
+        model = tf.keras.models.load_model("C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/models/conv1D_cb.h5")
+        #output = {"status": "success", "message": "Modelo carregado com sucesso."}
+    except Exception as e:
+        #output = {"status": "error", "message": f"Erro ao carregar o modelo: {str(e)}"}
+        #print(json.dumps(output))
+        sys.exit(1)
+
+    # Realiza a predição
+    prediction = model.predict(array)  # Converte para lista
+    y_pred = np.where(prediction>0.5,1,0).tolist()  # Serializa como lista
+    
+    # Converte prediction para lista para compatibilidade com JSON
+    prediction_list = prediction.tolist()
+
+    # Prepara a saída
+    output = {
+        #"status": "success",
+        #"message": "Predição realizada com sucesso.",
+        "prediction": prediction_list,
+        "y_pred": y_pred
+    }
+
+    # Imprime a saída final
+    print(json.dumps(output))
+
+except json.JSONDecodeError as e:
+    output = {"status": "error", "message": f"Erro ao decodificar JSON: {str(e)}"}
+    print(json.dumps(output))
+    sys.exit(1)
+except ValueError as e:
+    output = {"status": "error", "message": f"Erro nos dados de entrada: {str(e)}"}
+    print(json.dumps(output))
+    sys.exit(1)
+except Exception as e:
+    output = {"status": "error", "message": f"Erro inesperado: {str(e)}"}
+    print(json.dumps(output))
+    sys.exit(1)
