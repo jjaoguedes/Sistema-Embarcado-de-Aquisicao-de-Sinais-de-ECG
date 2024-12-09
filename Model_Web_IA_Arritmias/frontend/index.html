@@ -8,14 +8,17 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     .chart-container {
-      position: relative; /* Posicionamento relativo para ajustar facilmente */
-      left: 0; /* Alinha o contêiner à esquerda */
+      position: relative;
+      /* Posicionamento relativo para ajustar facilmente */
+      left: 0;
+      /* Alinha o contêiner à esquerda */
       width: 100vw;
       height: 50vh;
       overflow-x: hidden;
       border: 1px solid #ddd;
       padding: 10px;
-      background-color: #1c1c1c; /* Fundo escuro */
+      background-color: #1c1c1c;
+      /* Fundo escuro */
     }
 
     #ecgChart {
@@ -38,6 +41,7 @@
   <div class="button-container">
     <button id="fetch-ecg-btn" enabled>Carregar ECG</button>
     <button id="continue-btn" disabled>Continuar Exibição</button>
+    <button id="classifyButton" disabled>Classificar Dados</button>
   </div>
 
 
@@ -164,6 +168,8 @@
     const fetchButton = document.getElementById('fetch-ecg-btn');
 
     continueButton.addEventListener("click", () => {
+      
+      displayedData = [];
       isPaused = false; // Retira o estado de pausa
       continueButton.disabled = true; // Desativa o botão novamente
       console.log("Continuação da exibição iniciada.");
@@ -176,10 +182,33 @@
 
       if (patientId) {
         console.log(`Iniciando plotagem para o paciente ID ${patientId}`);
-        shouldStop = false;
+        shouldStop = false; // Interrompe a execução atual
+        ecgChart.data.labels = [];
+        ecgChart.data.datasets[0].data = [];
+        ecgChart.update();
         fetchAndPlotECG(patientId);
       } else {
         alert('Por favor, selecione um paciente primeiro.');
+      }
+    });
+
+    document.getElementById("classifyButton").addEventListener("click", () => {
+      if (displayedData.length > 0) {
+        console.log("Enviando dados para classificação...");
+        // Enviar os dados ao servidor
+        classifyData(displayedData)
+          .then(response => {
+            console.log("Classificação concluída:", response);
+            
+          })
+          .catch(error => {
+            console.error("Erro ao classificar dados:", error);
+            
+          });
+
+        
+      } else {
+        console.log("Nenhum dado disponível para classificação.");
       }
     });
 
@@ -206,18 +235,18 @@
     // Função para atualizar a classificação e probabilidade na div
     function updateClassification(className, probability) {
 
-      if(className == 0){
+      if (className == 0) {
         document.getElementById("class").innerText = "Normal"; // Atualiza a classe
         document.getElementById("probability").innerText = probability.toFixed(2); // Atualiza a probabilidade
-      }else{
+      } else {
         document.getElementById("class").innerText = "Anormal"; // Atualiza a classe
         document.getElementById("probability").innerText = probability.toFixed(2); // Atualiza a probabilidade
       }
-  
+
     }
 
     // Função para enviar os dados ao servidor PHP
-    async function sendDataToServer(data) {
+    async function classifyData(data) {
       try {
         const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/classify_samples.php', {
           method: 'POST',
@@ -292,13 +321,9 @@
               if (currentIndex % maxSamples === 0) {
                 isPaused = true; // Ativa a pausa
                 continueButton.disabled = false; // Habilita o botão para continuar
+                document.getElementById("classifyButton").disabled = false;
                 console.log(`Exibição pausada após ${maxSamples} amostras.`);
 
-                // Enviar os dados ao servidor
-                sendDataToServer(displayedData);
-
-                // Limpar o array de dados exibidos
-                displayedData = [];
               }
             } else {
               clearInterval(plotInterval);
@@ -315,9 +340,6 @@
         console.error("Erro ao buscar dados de ECG:", error);
       }
     }
-
-
-
 
   </script>
 </body>

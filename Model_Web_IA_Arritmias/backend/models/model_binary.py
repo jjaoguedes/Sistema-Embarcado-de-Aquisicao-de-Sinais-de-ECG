@@ -3,6 +3,11 @@ import json
 import tensorflow as tf
 import numpy as np
 
+def normalize_data(data):
+    min_val = np.min(data)
+    max_val = np.max(data)
+    return (data - min_val) / (max_val - min_val) if max_val > min_val else data
+
 # Lê os dados da entrada
 temp_file_path = sys.argv[1]
 
@@ -15,9 +20,13 @@ try:
     # Converte os dados para um array NumPy
     array = np.array(numeric_value, dtype=float)
 
+    array = normalize_data(array)
+
     # Ajusta a forma do array para o modelo
     array = np.expand_dims(array, axis=-1)
     array = np.expand_dims(array, axis=0)
+
+
 
     # Tenta carregar o modelo
     try:

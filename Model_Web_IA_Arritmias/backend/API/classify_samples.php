@@ -8,7 +8,7 @@ $request_body = file_get_contents('php://input');
 $data = json_decode($request_body, true);
 
 // Exibe os dados recebidos para depuração (opcional)
-//file_put_contents('php://stderr', print_r($data, true));
+file_put_contents('php://stderr', print_r($data, true));
 
 // Envia os dados para o script Python via execução de linha de comando
 $data_json = json_encode($data);  // Garante que os dados sejam um JSON válido
@@ -28,8 +28,8 @@ file_put_contents($temp_file, $data_json);
 $python_script = "C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/models/model_binary.py";
 
 // Comando para executar o script Python com o caminho do arquivo temporário como argumento
-$command = 'set PYTHONPATH=C:/Users/jvito/AppData/Local/Programs/Python/Python311/Lib/site-packages && '
-         . escapeshellcmd("C:/Users/jvito/AppData/Local/Programs/Python/Python311/python.exe")
+$command = 'set PYTHONPATH=site-packages && '
+         . escapeshellcmd("C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/python.exe") #C:/Users/jvito/AppData/Local/Programs/Python/Python311/Lib/site-packages
          . " " . escapeshellarg($python_script)
          . " " . escapeshellarg($temp_file);
 
@@ -60,7 +60,7 @@ $response = [
 ];
 
 // Log para debug
-#file_put_contents('php://stderr', print_r($response, true));
+file_put_contents('php://stderr', print_r($response, true));
 
  // Envia a resposta como JSON
  header('Content-Type: application/json');
