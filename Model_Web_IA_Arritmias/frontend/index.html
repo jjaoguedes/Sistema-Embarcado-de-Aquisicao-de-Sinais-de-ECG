@@ -168,7 +168,7 @@
     const fetchButton = document.getElementById('fetch-ecg-btn');
 
     continueButton.addEventListener("click", () => {
-      
+
       displayedData = [];
       isPaused = false; // Retira o estado de pausa
       continueButton.disabled = true; // Desativa o botão novamente
@@ -199,14 +199,14 @@
         classifyData(displayedData)
           .then(response => {
             console.log("Classificação concluída:", response);
-            
+
           })
           .catch(error => {
             console.error("Erro ao classificar dados:", error);
-            
+
           });
 
-        
+
       } else {
         console.log("Nenhum dado disponível para classificação.");
       }
@@ -224,6 +224,9 @@
         );
 
         shouldStop = true; // Interrompe a execução atual
+        displayedData = []; // Limpa as 1600 amostras armazenadas
+        isPaused = false; // Retira o estado de pausa
+        continueButton.disabled = true; // Desativa o botão novamente
         ecgChart.data.labels = [];
         ecgChart.data.datasets[0].data = [];
         ecgChart.update();

@@ -28,8 +28,11 @@ file_put_contents($temp_file, $data_json);
 $python_script = "C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/models/model_binary.py";
 
 // Comando para executar o script Python com o caminho do arquivo temporário como argumento
-$command = 'set PYTHONPATH=site-packages && '
-         . escapeshellcmd("C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/python.exe") #C:/Users/jvito/AppData/Local/Programs/Python/Python311/Lib/site-packages
+#C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/python.exe
+#C:/Users/jvito/AppData/Local/Programs/Python/Python311/Lib/site-packages
+#C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/python.exe
+$command = 'set PYTHONPATH=C:/Users/jvito/AppData/Local/Programs/Python/Python311/Lib/site-packages && '
+         . escapeshellcmd("C:/Users/jvito/AppData/Local/Programs/Python/Python311/python.exe") #C:/Users/jvito/AppData/Local/Programs/Python/Python311/Lib/site-packages
          . " " . escapeshellarg($python_script)
          . " " . escapeshellarg($temp_file);
 
