@@ -230,6 +230,8 @@
         ecgChart.data.labels = [];
         ecgChart.data.datasets[0].data = [];
         ecgChart.update();
+        document.getElementById("class").innerText = ""; // Atualiza a classe
+        document.getElementById("probability").innerText = "";
       } else {
         console.log("Nenhum paciente selecionado.");
       }

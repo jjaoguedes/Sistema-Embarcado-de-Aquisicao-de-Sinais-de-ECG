@@ -25,7 +25,7 @@ $temp_file = tempnam(sys_get_temp_dir(), 'data_');  // Cria um arquivo temporár
 file_put_contents($temp_file, $data_json);
 
 // Caminho para o script Python do modelo
-$python_script = "C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/models/model_binary.py";
+$python_script = "C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/scripts/model_binary.py";
 
 // Comando para executar o script Python com o caminho do arquivo temporário como argumento
 #C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/python.exe
