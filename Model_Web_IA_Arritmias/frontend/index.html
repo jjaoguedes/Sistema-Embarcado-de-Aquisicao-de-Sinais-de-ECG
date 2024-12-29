@@ -25,6 +25,54 @@
       width: 100%;
       height: 100%;
     }
+
+    /* Contêiner da lista de intervalos */
+    .interval-list-container {
+      width: 100%;
+      /* Define a largura da div */
+      max-width: 1350px;
+      /* Define um limite máximo de largura, opcional */
+      overflow-x: auto;
+      /* Ativa o scroll horizontal */
+      white-space: nowrap;
+      /* Garante que os itens não quebrem para a próxima linha */
+      border: 1px solid #ccc;
+      /* Opcional: borda ao redor do contêiner */
+      padding: 10px;
+      /* Espaçamento interno, opcional */
+    }
+
+    /* Estilo para criar uma lista horizontal */
+    #intervalList {
+      list-style-type: none;
+      /* Remove os marcadores da lista */
+      margin: 0;
+      /* Remove margens */
+      padding: 0;
+      /* Remove espaçamento interno */
+      display: inline-flex;
+      /* Alinha os itens horizontalmente */
+    }
+
+    #intervalList li {
+      margin-right: 10px;
+      /* Espaçamento entre os itens */
+      padding: 5px 10px;
+      /* Espaçamento interno dos itens */
+      background-color: #f0f0f0;
+      /* Cor de fundo dos itens */
+      border: 1px solid #ccc;
+      /* Borda dos itens */
+      border-radius: 5px;
+      /* Bordas arredondadas */
+      cursor: pointer;
+      /* Mostra o cursor de clique */
+    }
+
+    #intervalList li:hover {
+      background-color: #ddd;
+      /* Cor de fundo ao passar o mouse */
+    }
   </style>
 </head>
 
@@ -32,16 +80,16 @@
   <h1>ECG Monitor</h1>
 
   <!-- Seletor de Paciente -->
-  <label for="patient-select">Selecione um Paciente:</label>
+  <label for="patient-select">Select a patient:</label>
   <select id="patient-select" onchange="onPatientChange()">
-    <option value="">Carregando pacientes...</option>
+    <option value="">Loading patients...</option>
   </select>
 
   <!-- Botão para carregar dados -->
   <div class="button-container">
-    <button id="fetch-ecg-btn" enabled>Carregar ECG</button>
-    <button id="continue-btn" disabled>Continuar Exibição</button>
-    <button id="classifyButton" disabled>Classificar Dados</button>
+    <button id="fetch-ecg-btn" enabled>Load Data</button>
+    <!--<button id="continue-btn" disabled>Continuar Exibição</button>-->
+    <button id="classifyButton" enabled>Classify Data</button>
   </div>
 
 
@@ -53,8 +101,12 @@
 
   <!-- Div para exibir o resultado da classificação -->
   <div class="bottom-left-div">
-    <p><strong>Classe:</strong> <span id="class"></span></p>
-    <p><strong>Probabilidade:</strong> <span id="probability"></span>%</p>
+    <p><strong>Class:</strong> <span id="class"></span></p>
+    <p><strong>Probability:</strong> <span id="probability"></span>%</p>
+  </div>
+
+  <div class="interval-list-container">
+    <ul id="intervalList"></ul>
   </div>
 
 
@@ -65,7 +117,7 @@
     let displayedData = []; // Array para armazenar os dados exibidos no gráfico
     const samplingRate = 360; // Frequência de amostragem em Hz
     const maxSamples = 1600; // Número máximo de amostras exibidas no gráfico
-    const continueButton = document.getElementById("continue-btn");
+    //const continueButton = document.getElementById("continue-btn");
     const ctx = document.getElementById('ecgChart').getContext('2d');
     const ecgChart = new Chart(ctx, {
       type: 'line',
@@ -81,6 +133,20 @@
         }]
       },
       options: {
+
+        plugins: {
+          zoom: {
+            pan: {
+              enabled: true,
+              mode: 'x', // Permite arrastar apenas no eixo X
+            },
+            zoom: {
+              enabled: true,
+              mode: 'x', // Zoom no eixo X
+            }
+          }
+        },
+
         animation: {
           duration: 0
         },
@@ -143,7 +209,7 @@
         }
 
         const patients = await response.json();
-        patientSelect.innerHTML = '<option value="">Selecione um paciente</option>';
+        patientSelect.innerHTML = '<option value="">Select a patient</option>';
 
         if (patients.length > 0) {
           patients.forEach(patient => {
@@ -154,11 +220,11 @@
           });
 
         } else {
-          patientSelect.innerHTML = '<option value="">Nenhum paciente encontrado</option>';
+          patientSelect.innerHTML = '<option value="">No patients found</option>';
         }
       } catch (error) {
         console.error('Erro na requisição:', error);
-        patientSelect.innerHTML = '<option value="">Erro ao carregar pacientes</option>';
+        patientSelect.innerHTML = '<option value="">Error loading patients</option>';
       }
     }
 
@@ -167,13 +233,13 @@
 
     const fetchButton = document.getElementById('fetch-ecg-btn');
 
-    continueButton.addEventListener("click", () => {
+    /*continueButton.addEventListener("click", () => {
 
       displayedData = [];
       isPaused = false; // Retira o estado de pausa
-      continueButton.disabled = true; // Desativa o botão novamente
+      //continueButton.disabled = true; // Desativa o botão novamente
       console.log("Continuação da exibição iniciada.");
-    });
+    });*/
 
     // Adiciona evento ao botão
     fetchButton.addEventListener('click', () => {
@@ -216,7 +282,7 @@
     function onPatientChange() {
       patientSelect = document.getElementById("patient-select");
       const selectedPatient = patientSelect.value;
-      continueButton.disabled = true; // Desativa o botão novamente 
+      //continueButton.disabled = true; // Desativa o botão novamente 
 
       if (selectedPatient) {
         console.log(
@@ -226,12 +292,14 @@
         shouldStop = true; // Interrompe a execução atual
         displayedData = []; // Limpa as 1600 amostras armazenadas
         isPaused = false; // Retira o estado de pausa
-        continueButton.disabled = true; // Desativa o botão novamente
+        //continueButton.disabled = true; // Desativa o botão novamente
         ecgChart.data.labels = [];
         ecgChart.data.datasets[0].data = [];
         ecgChart.update();
         document.getElementById("class").innerText = ""; // Atualiza a classe
         document.getElementById("probability").innerText = "";
+        const intervalList = document.getElementById('intervalList');
+        intervalList.innerHTML = ''; // Limpa a lista anterior
       } else {
         console.log("Nenhum paciente selecionado.");
       }
@@ -244,7 +312,7 @@
         document.getElementById("class").innerText = "Normal"; // Atualiza a classe
         document.getElementById("probability").innerText = probability.toFixed(2); // Atualiza a probabilidade
       } else {
-        document.getElementById("class").innerText = "Anormal"; // Atualiza a classe
+        document.getElementById("class").innerText = "Abnormal"; // Atualiza a classe
         document.getElementById("probability").innerText = probability.toFixed(2); // Atualiza a probabilidade
       }
 
@@ -275,7 +343,26 @@
     }
 
 
-    // Buscar e plotar os dados de ECG
+
+    function splitECGData(ecgData, intervalSize) {
+      const intervals = [];
+      for (let i = 0; i < ecgData.length; i += intervalSize) {
+        intervals.push(ecgData.slice(i, i + intervalSize));
+      }
+      return intervals;
+    }
+
+    function plotECGInterval(intervalData, samplingRate) {
+      const time = intervalData.map((_, index) => index / samplingRate);
+      const values = intervalData.map(point => point.value);
+      displayedData = values;
+      ecgChart.data.labels = time;
+      ecgChart.data.datasets[0].data = values;
+
+      ecgChart.update();
+    }
+
+
     async function fetchAndPlotECG(patientId) {
       try {
         const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
@@ -288,58 +375,40 @@
         const ecgData = await response.json();
 
         if (ecgData.length > 0) {
-          let currentIndex = 0;
+          const intervalSize = 1600;
+          const intervals = splitECGData(ecgData, intervalSize);
 
-          const plotInterval = setInterval(() => {
-            if (shouldStop) {
-              console.log("Plotagem interrompida.");
-              clearInterval(plotInterval);
-              return;
-            }
+          // Gera a lista de índices na interface
+          const intervalList = document.getElementById('intervalList');
+          intervalList.innerHTML = ''; // Limpa a lista anterior
 
-            if (isPaused) {
-              console.log("Gráfico pausado. Aguardando comando para continuar.");
-              return; // Não executa o restante enquanto está pausado
-            }
+          intervals.forEach((interval, index) => {
+            // Calcula os limites do intervalo
+            const startIndex = index * intervalSize;
+            const endIndex = Math.min(startIndex + intervalSize - 1, ecgData.length - 1); // Garante que não exceda o tamanho total dos dados
 
-            if (currentIndex < ecgData.length) {
-              const newTime = currentIndex / samplingRate;
-              const newValue = ecgData[currentIndex].value;
+            // Cria o item da lista
+            const listItem = document.createElement('li');
 
-              ecgChart.data.labels.push(newTime);
-              ecgChart.data.datasets[0].data.push(newValue);
+            // Adiciona o índice acima do intervalo
+            const indexText = document.createElement('span'); // Elemento para o índice
+            indexText.textContent = `Index ${index}: `; // Exibe "Intervalo X:"
+            indexText.style.fontWeight = 'bold'; // Opcional: deixa o texto em negrito
+            listItem.appendChild(indexText); // Adiciona o índice ao item da lista
 
-              // Adicionar o dado exibido ao array
-              displayedData.push(newValue);
+            // Adiciona os limites do intervalo no mesmo item
+            const rangeText = document.createTextNode(`${startIndex} - ${endIndex}`); // Texto com os limites
+            listItem.appendChild(rangeText); // Adiciona o texto ao item da lista
+
+            // Adiciona evento de clique para plotar o intervalo correspondente
+            listItem.addEventListener('click', () => plotECGInterval(interval, samplingRate));
+            intervalList.appendChild(listItem);
+          });
 
 
-              // Remove valores antigos quando excede o máximo
-              if (ecgChart.data.labels.length > maxSamples) {
-                ecgChart.data.labels.shift();
-                ecgChart.data.datasets[0].data.shift();
-              }
-
-              ecgChart.update();
-              currentIndex++;
-
-              // Pausa automaticamente após 1600 amostras
-              if (currentIndex % maxSamples === 0) {
-                isPaused = true; // Ativa a pausa
-                continueButton.disabled = false; // Habilita o botão para continuar
-                document.getElementById("classifyButton").disabled = false;
-                console.log(`Exibição pausada após ${maxSamples} amostras.`);
-
-              }
-            } else {
-              clearInterval(plotInterval);
-              console.log("Plotagem concluída.");
-            }
-          }, 1000 / samplingRate);
+          console.log("Dados divididos e lista gerada.");
         } else {
           console.log("Nenhum dado de ECG encontrado para este paciente.");
-          ecgChart.data.labels = [];
-          ecgChart.data.datasets[0].data = [];
-          ecgChart.update();
         }
       } catch (error) {
         console.error("Erro ao buscar dados de ECG:", error);
