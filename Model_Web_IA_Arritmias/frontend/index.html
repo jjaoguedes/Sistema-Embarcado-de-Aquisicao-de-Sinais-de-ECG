@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ECG Monitor em Tempo Real</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
     .chart-container {
       position: relative;
@@ -13,7 +15,7 @@
       left: 0;
       /* Alinha o contêiner à esquerda */
       width: 100vw;
-      height: 50vh;
+      height: 45vh;
       overflow-x: hidden;
       border: 1px solid #ddd;
       padding: 10px;
@@ -77,36 +79,58 @@
 </head>
 
 <body>
-  <h1>ECG Monitor</h1>
 
-  <!-- Seletor de Paciente -->
-  <label for="patient-select">Select a patient:</label>
-  <select id="patient-select" onchange="onPatientChange()">
-    <option value="">Loading patients...</option>
-  </select>
+  <div class="container-fluid mt-3">
+    <!-- Top row with two responsive columns -->
+    <div class="row mb-3 " style="margin-left: 10; width: 100%; max-width: 100%;">
+      <div class="col-lg-9 col-md-8 col-sm-12">
+        <!-- Left top wide section -->
+        <label for="patient-select">Patient</label>
+        <select id="patient-select" class="form-select" onchange="onPatientChange()">
+          <option value="">Loading patients...</option>
+        </select>
+      </div>
+      <div class="col-lg-3 col-md-4 col-sm-12 d-flex justify-content-end align-items-center">
+        <!-- Right small section -->
+        <button id="fetch-ecg-btn" class="btn btn-primary me-2">Load Data</button>
+        <button id="classifyButton" class="btn btn-primary">Classify Data</button>
+      </div>
+    </div>
 
-  <!-- Botão para carregar dados -->
-  <div class="button-container">
-    <button id="fetch-ecg-btn" enabled>Load Data</button>
-    <!--<button id="continue-btn" disabled>Continuar Exibição</button>-->
-    <button id="classifyButton" enabled>Classify Data</button>
-  </div>
+    <!-- Narrow horizontal section -->
+    <div class="row mb-3">
+      <div class="col-12">
+        <div class="interval-list-container border rounded" style="margin-left: 0; width: 100%; max-width: 100%;">
+          <ul id="intervalList" class="list-unstyled"></ul>
+        </div>
+      </div>
+    </div>
 
+    <!-- Large middle section -->
+    <div class="row mb-3">
+      <div class="col-12">
+        <div class="chart-container border rounded" style="margin-left: 0; width: 100%; max-width: 100%;">
+          <canvas id="ecgChart"></canvas>
+        </div>
+      </div>
+    </div>
 
-  <!-- Contêiner do gráfico -->
-  <div class="chart-container">
-    <!-- Aqui o gráfico do Chart.js será renderizado -->
-    <canvas id="ecgChart"></canvas>
-  </div>
-
-  <!-- Div para exibir o resultado da classificação -->
-  <div class="bottom-left-div">
-    <p><strong>Class:</strong> <span id="class"></span></p>
-    <p><strong>Probability:</strong> <span id="probability"></span>%</p>
-  </div>
-
-  <div class="interval-list-container">
-    <ul id="intervalList"></ul>
+    <!-- Bottom row with two responsive columns -->
+    <div class="row ">
+      <div class="col-md-6 col-sm-12">
+        <!-- Bottom left section -->
+        <div class="bottom-left-div border rounded" style="margin-left: 0; width: 100%; max-width: 100%;">
+          <p><strong>Class:</strong> <span id="class"></span></p>
+          <p><strong>Probability:</strong> <span id="probability"></span>%</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-sm-12">
+        <!-- Bottom right section -->
+        <div class="bg-light p-3 border rounded">
+          Bottom Right Section
+        </div>
+      </div>
+    </div>
   </div>
 
 
@@ -234,7 +258,7 @@
     const fetchButton = document.getElementById('fetch-ecg-btn');
 
     /*continueButton.addEventListener("click", () => {
-
+ 
       displayedData = [];
       isPaused = false; // Retira o estado de pausa
       //continueButton.disabled = true; // Desativa o botão novamente
@@ -416,6 +440,8 @@
     }
 
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>
