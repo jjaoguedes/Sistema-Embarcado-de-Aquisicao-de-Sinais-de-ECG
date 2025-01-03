@@ -102,6 +102,9 @@
       <div class="col-12">
         <div class="interval-list-container border rounded" style="margin-left: 0; width: 100%; max-width: 100%;">
           <ul id="intervalList" class="list-unstyled"></ul>
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border d-none" id="spinner"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -133,9 +136,10 @@
     </div>
   </div>
 
-
   <script>
     let patientSelect = document.getElementById('patient-select');
+
+    const fetchButton = document.getElementById('fetch-ecg-btn');
     let shouldStop = false; // Controla a interrupção
     let isPaused = false; // Controla se o gráfico está pausado
     let displayedData = []; // Array para armazenar os dados exibidos no gráfico
@@ -225,7 +229,7 @@
     // Função para carregar pacientes na lista de seleção
     async function loadPatients() {
       patientSelect = document.getElementById('patient-select');
-
+      
       try {
         const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_patients.php'); // Endpoint correto
         if (!response.ok) {
@@ -255,21 +259,14 @@
     // Chamar a função de carregamento quando a página for carregada
     window.onload = loadPatients;
 
-    const fetchButton = document.getElementById('fetch-ecg-btn');
-
-    /*continueButton.addEventListener("click", () => {
- 
-      displayedData = [];
-      isPaused = false; // Retira o estado de pausa
-      //continueButton.disabled = true; // Desativa o botão novamente
-      console.log("Continuação da exibição iniciada.");
-    });*/
-
-    // Adiciona evento ao botão
+    // Adiciona evento ao botão Load Data
     fetchButton.addEventListener('click', () => {
       patientSelect = document.getElementById('patient-select');
       const patientId = patientSelect.value;
-
+      intervalList.innerHTML = ''; // Limpa a lista anterior
+      // Mostrar o spinner
+      const spinner = document.getElementById('spinner');
+      spinner.classList.remove('d-none');
       if (patientId) {
         console.log(`Iniciando plotagem para o paciente ID ${patientId}`);
         shouldStop = false; // Interrompe a execução atual
@@ -307,7 +304,8 @@
       patientSelect = document.getElementById("patient-select");
       const selectedPatient = patientSelect.value;
       //continueButton.disabled = true; // Desativa o botão novamente 
-
+      const spinner = document.getElementById('spinner');
+      spinner.classList.add('d-none');
       if (selectedPatient) {
         console.log(
           `Paciente ID ${selectedPatient} selecionado. Gráfico limpo. Clique no botão para iniciar a plotagem.`
@@ -428,6 +426,9 @@
             listItem.addEventListener('click', () => plotECGInterval(interval, samplingRate));
             intervalList.appendChild(listItem);
           });
+
+          // Esconde o spinner após preencher a lista
+          spinner.classList.add('d-none');
 
 
           console.log("Dados divididos e lista gerada.");
