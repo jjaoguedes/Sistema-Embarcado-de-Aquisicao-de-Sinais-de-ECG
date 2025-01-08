@@ -1,0 +1,66 @@
+.chart-container {
+    position: relative;
+    /* Posicionamento relativo para ajustar facilmente */
+    left: 0;
+    /* Alinha o contêiner à esquerda */
+    width: 100vw;
+    height: 45vh;
+    overflow-x: hidden;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #1c1c1c;
+    /* Fundo escuro */
+}
+
+#ecgChart {
+    width: 100%;
+    height: 100%;
+}
+
+/* Contêiner da lista de intervalos */
+.interval-list-container {
+    width: 100%;
+    /* Define a largura da div */
+    max-width: 1350px;
+    /* Define um limite máximo de largura, opcional */
+    overflow-x: auto;
+    /* Ativa o scroll horizontal */
+    white-space: nowrap;
+    /* Garante que os itens não quebrem para a próxima linha */
+    border: 1px solid #ccc;
+    /* Opcional: borda ao redor do contêiner */
+    padding: 10px;
+    /* Espaçamento interno, opcional */
+}
+
+/* Estilo para criar uma lista horizontal */
+#intervalList {
+    list-style-type: none;
+    /* Remove os marcadores da lista */
+    margin: 0;
+    /* Remove margens */
+    padding: 0;
+    /* Remove espaçamento interno */
+    display: inline-flex;
+    /* Alinha os itens horizontalmente */
+}
+
+#intervalList li {
+    margin-right: 10px;
+    /* Espaçamento entre os itens */
+    padding: 5px 10px;
+    /* Espaçamento interno dos itens */
+    background-color: #f0f0f0;
+    /* Cor de fundo dos itens */
+    border: 1px solid #ccc;
+    /* Borda dos itens */
+    border-radius: 5px;
+    /* Bordas arredondadas */
+    cursor: pointer;
+    /* Mostra o cursor de clique */
+}
+
+#intervalList li:hover {
+    background-color: #ddd;
+    /* Cor de fundo ao passar o mouse */
+}
