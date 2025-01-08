@@ -128,7 +128,7 @@
             <p><strong>Class:</strong> <span id="class"></span></p>
           </div>
           <div id="probability-container">
-            <p><strong>Probability:</strong> <span id="probability"></span>%</p>
+            <p><strong>Probability:</strong> <span id="probability"></span></p>
           </div>
           <div class="d-flex justify-content-center">
             <div class="spinner-border d-none" id="SpinnerBinaryClassification"></div>
@@ -139,338 +139,389 @@
       <!-- Bottom right section -->
       <div class="col-md-6 col-sm-12 mb-3">
         <div class="bg-light border rounded p-3" style="width: 100%; max-width: 100%;">
-          <h5 class="border-bottom pb-2 mb-3">Eight - Class classification</h5>
-          <p>Conteúdo da seção direita...</p>
+          <h5 class="border-bottom pb-2 mb-3">Eight - Class Classification</h5>
+          <ul id="eight-class-list" style="padding: 0; list-style: none;"></ul>
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border d-none" id="SpinnerEightClassification"></div>
+          </div>
         </div>
       </div>
-    </div>
-    <script>
-      let patientSelect = document.getElementById('patient-select');
-      const fetchButton = document.getElementById('fetch-ecg-btn');
-      let shouldStop = false; // Controla a interrupção
-      let isPaused = false; // Controla se o gráfico está pausado
-      let displayedData = []; // Array para armazenar os dados exibidos no gráfico
-      const samplingRate = 360; // Frequência de amostragem em Hz
-      const maxSamples = 1600; // Número máximo de amostras exibidas no gráfico
-      //const continueButton = document.getElementById("continue-btn");
-      const ctx = document.getElementById('ecgChart').getContext('2d');
-      const ecgChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: [{
-            label: 'ECG',
-            data: [],
-            borderColor: '#FFFFFF',
-            borderWidth: 1.5,
-            fill: false,
-            pointRadius: 0,
-          }]
-        },
-        options: {
 
-          plugins: {
-            zoom: {
-              pan: {
-                enabled: true,
-                mode: 'x', // Permite arrastar apenas no eixo X
-              },
+      <script>
+        // Lista de nomes das classes na ordem correta
+        const classNames = [
+          "Normal Beat",
+          "Atrial Premature Contraction",
+          "Ventricular Escape Beat",
+          "Left Bundle Branch Block Beat",
+          "Right Bundle Branch Block Beat",
+          "Premature Ventricular",
+          "Ventricular Flutter Wave",
+          "Paced Beat"
+        ];
+        let patientSelect = document.getElementById('patient-select');
+        const fetchButton = document.getElementById('fetch-ecg-btn');
+        let shouldStop = false; // Controla a interrupção
+        let isPaused = false; // Controla se o gráfico está pausado
+        let displayedData = []; // Array para armazenar os dados exibidos no gráfico
+        const samplingRate = 360; // Frequência de amostragem em Hz
+        const maxSamples = 1600; // Número máximo de amostras exibidas no gráfico
+        //const continueButton = document.getElementById("continue-btn");
+        const ctx = document.getElementById('ecgChart').getContext('2d');
+        const ecgChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [{
+              label: 'ECG',
+              data: [],
+              borderColor: '#FFFFFF',
+              borderWidth: 1.5,
+              fill: false,
+              pointRadius: 0,
+            }]
+          },
+          options: {
+
+            plugins: {
               zoom: {
-                enabled: true,
-                mode: 'x', // Zoom no eixo X
-              }
-            }
-          },
-
-          animation: {
-            duration: 0
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              type: 'linear',
-              title: {
-                display: false
-              },
-              grid: {
-                color: '#FFFFFF',
-                lineWidth: 0.0
-              },
-              ticks: {
-                color: '#FFFFFF',
+                pan: {
+                  enabled: true,
+                  mode: 'x', // Permite arrastar apenas no eixo X
+                },
+                zoom: {
+                  enabled: true,
+                  mode: 'x', // Zoom no eixo X
+                }
               }
             },
-            x: {
-              title: {
+
+            animation: {
+              duration: 0
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                type: 'linear',
+                title: {
+                  display: false
+                },
+                grid: {
+                  color: '#FFFFFF',
+                  lineWidth: 0.0
+                },
+                ticks: {
+                  color: '#FFFFFF',
+                }
+              },
+              x: {
+                title: {
+                  display: false
+                },
+                min: 0,
+                max: maxSamples,
+                ticks: {
+                  color: '#FFFFFF',
+                  display: false // Oculta os rótulos para maior realismo
+                },
+                grid: {
+                  color: '#FFFFFF',
+                  lineWidth: 0.0
+                }
+              }
+            },
+            plugins: {
+              legend: {
                 display: false
-              },
-              min: 0,
-              max: maxSamples,
-              ticks: {
-                color: '#FFFFFF',
-                display: false // Oculta os rótulos para maior realismo
-              },
-              grid: {
-                color: '#FFFFFF',
-                lineWidth: 0.0
+              }
+            },
+            layout: {
+              padding: 10
+            },
+            elements: {
+              line: {
+                tension: 0 // Linha reta para ECG
               }
             }
-          },
-          plugins: {
-            legend: {
-              display: false
+          }
+        });
+
+        // Função para carregar pacientes na lista de seleção
+        async function loadPatients() {
+          patientSelect = document.getElementById('patient-select');
+
+          try {
+            const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_patients.php'); // Endpoint correto
+            if (!response.ok) {
+              throw new Error('Erro ao carregar pacientes.');
             }
-          },
-          layout: {
-            padding: 10
-          },
-          elements: {
-            line: {
-              tension: 0 // Linha reta para ECG
+
+            const patients = await response.json();
+            patientSelect.innerHTML = '<option value="">Select a patient</option>';
+
+            if (patients.length > 0) {
+              patients.forEach(patient => {
+                const option = document.createElement('option');
+                option.value = patient.id_patient; // Define o ID do paciente como valor
+                option.textContent = `${patient.name} (${patient.age} anos)`;
+                patientSelect.appendChild(option);
+              });
+
+            } else {
+              patientSelect.innerHTML = '<option value="">No patients found</option>';
             }
+          } catch (error) {
+            console.error('Erro na requisição:', error);
+            patientSelect.innerHTML = '<option value="">Error loading patients</option>';
           }
         }
-      });
 
-      // Função para carregar pacientes na lista de seleção
-      async function loadPatients() {
-        patientSelect = document.getElementById('patient-select');
+        // Chamar a função de carregamento quando a página for carregada
+        window.onload = loadPatients;
 
-        try {
-          const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_patients.php'); // Endpoint correto
-          if (!response.ok) {
-            throw new Error('Erro ao carregar pacientes.');
+        // Função para inicializar a lista com os nomes das classes
+        function initializeClassList() {
+          const listContainer = document.getElementById('eight-class-list');
+
+          // Adiciona cada nome de classe na lista como itens
+          classNames.forEach((className) => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `<strong>${className}: </strong>`;
+            listItem.style.marginBottom = "5px"; // Adiciona margem inferior entre os itens
+            listContainer.appendChild(listItem);
+          });
+        }
+
+        // Inicializa a lista assim que a página for carregada
+        document.addEventListener('DOMContentLoaded', initializeClassList);
+
+        // Adiciona evento ao botão Load Data
+        fetchButton.addEventListener('click', () => {
+          patientSelect = document.getElementById('patient-select');
+          const patientId = patientSelect.value;
+          intervalList.innerHTML = ''; // Limpa a lista anterior
+          // Mostrar o spinner
+          const spinner = document.getElementById('spinner');
+          spinner.classList.remove('d-none');
+          if (patientId) {
+            console.log(`Iniciando plotagem para o paciente ID ${patientId}`);
+            shouldStop = false; // Interrompe a execução atual
+            ecgChart.data.labels = [];
+            ecgChart.data.datasets[0].data = [];
+            ecgChart.update();
+            fetchAndPlotECG(patientId);
+          } else {
+            alert('Por favor, selecione um paciente primeiro.');
           }
+        });
 
-          const patients = await response.json();
-          patientSelect.innerHTML = '<option value="">Select a patient</option>';
+        document.getElementById("classifyButton").addEventListener("click", () => {
 
-          if (patients.length > 0) {
-            patients.forEach(patient => {
-              const option = document.createElement('option');
-              option.value = patient.id_patient; // Define o ID do paciente como valor
-              option.textContent = `${patient.name} (${patient.age} anos)`;
-              patientSelect.appendChild(option);
-            });
+          // Mostrar o spinner
+          const spinner_cb = document.getElementById('SpinnerBinaryClassification');
+          // Esconde os elementos de classe e probabilidade
+          document.getElementById("class-container").classList.add("d-none"); // Oculta o container da classe
+          document.getElementById("probability-container").classList.add("d-none"); // Oculta o container da probabilidade
+
+          // Mostrar o spinner
+          const spinner_8c = document.getElementById('SpinnerEightClassification');
+          // Esconde os elementos de classe e probabilidade
+          document.getElementById("eight-class-list").classList.add("d-none"); // Oculta o container da classe
+
+          spinner_cb.classList.remove('d-none');
+          spinner_8c.classList.remove('d-none');
+
+          if (displayedData.length > 0) {
+            console.log("Enviando dados para classificação...");
+            // Enviar os dados ao servidor
+            classifyData(displayedData)
+              .then(response => {
+                console.log("Classificação concluída:", response);
+
+              })
+              .catch(error => {
+                console.error("Erro ao classificar dados:", error);
+
+              });
+
 
           } else {
-            patientSelect.innerHTML = '<option value="">No patients found</option>';
+            console.log("Nenhum dado disponível para classificação.");
           }
-        } catch (error) {
-          console.error('Erro na requisição:', error);
-          patientSelect.innerHTML = '<option value="">Error loading patients</option>';
-        }
-      }
+        });
 
-      // Chamar a função de carregamento quando a página for carregada
-      window.onload = loadPatients;
+        // Atualizar o gráfico ao selecionar um paciente
+        function onPatientChange() {
 
-      // Adiciona evento ao botão Load Data
-      fetchButton.addEventListener('click', () => {
-        patientSelect = document.getElementById('patient-select');
-        const patientId = patientSelect.value;
-        intervalList.innerHTML = ''; // Limpa a lista anterior
-        // Mostrar o spinner
-        const spinner = document.getElementById('spinner');
-        spinner.classList.remove('d-none');
-        if (patientId) {
-          console.log(`Iniciando plotagem para o paciente ID ${patientId}`);
-          shouldStop = false; // Interrompe a execução atual
-          ecgChart.data.labels = [];
-          ecgChart.data.datasets[0].data = [];
-          ecgChart.update();
-          fetchAndPlotECG(patientId);
-        } else {
-          alert('Por favor, selecione um paciente primeiro.');
-        }
-      });
-
-      document.getElementById("classifyButton").addEventListener("click", () => {
-
-        // Mostrar o spinner
-        const spinner = document.getElementById('SpinnerBinaryClassification');
-        // Esconde os elementos de classe e probabilidade
-        document.getElementById("class-container").classList.add("d-none"); // Oculta o container da classe
-        document.getElementById("probability-container").classList.add("d-none"); // Oculta o container da probabilidade
-
-        spinner.classList.remove('d-none');
-        if (displayedData.length > 0) {
-          console.log("Enviando dados para classificação...");
-          // Enviar os dados ao servidor
-          classifyData(displayedData)
-            .then(response => {
-              console.log("Classificação concluída:", response);
-
-            })
-            .catch(error => {
-              console.error("Erro ao classificar dados:", error);
-
-            });
-
-
-        } else {
-          console.log("Nenhum dado disponível para classificação.");
-        }
-      });
-
-      // Atualizar o gráfico ao selecionar um paciente
-      function onPatientChange() {
-        patientSelect = document.getElementById("patient-select");
-        const selectedPatient = patientSelect.value;
-        //continueButton.disabled = true; // Desativa o botão novamente 
-        const spinner = document.getElementById('spinner');
-        spinner.classList.add('d-none');
-        if (selectedPatient) {
-          console.log(
-            `Paciente ID ${selectedPatient} selecionado. Gráfico limpo. Clique no botão para iniciar a plotagem.`
-          );
-
-          shouldStop = true; // Interrompe a execução atual
-          displayedData = []; // Limpa as 1600 amostras armazenadas
-          isPaused = false; // Retira o estado de pausa
-          //continueButton.disabled = true; // Desativa o botão novamente
-          ecgChart.data.labels = [];
-          ecgChart.data.datasets[0].data = [];
-          ecgChart.update();
-          document.getElementById("class").innerText = ""; // Atualiza a classe
-          document.getElementById("probability").innerText = "";
-          const intervalList = document.getElementById('intervalList');
-          intervalList.innerHTML = ''; // Limpa a lista anterior
-        } else {
-          console.log("Nenhum paciente selecionado.");
-        }
-      }
-
-      // Função para atualizar a classificação e probabilidade na div
-      function updateClassification(className, probability) {
-
-        const spinner = document.getElementById('SpinnerBinaryClassification');
-
-        if (className == 0) {
-          document.getElementById("class-container").classList.remove("d-none"); // Exibe o container da classe
-          document.getElementById("probability-container").classList.remove("d-none"); // Exibe o container da probabilidade
+          patientSelect = document.getElementById("patient-select");
+          const selectedPatient = patientSelect.value;
+          //continueButton.disabled = true; // Desativa o botão novamente 
+          const spinner = document.getElementById('spinner');
           spinner.classList.add('d-none');
-          document.getElementById("class").innerText = "Normal"; // Atualiza a classe
-          document.getElementById("probability").innerText = probability.toFixed(2); // Atualiza a probabilidade
-        } else {
-          document.getElementById("class-container").classList.remove("d-none"); // Exibe o container da classe
-          document.getElementById("probability-container").classList.remove("d-none"); // Exibe o container da probabilidade
-          spinner.classList.add('d-none');
-          document.getElementById("class").innerText = "Abnormal"; // Atualiza a classe
-          document.getElementById("probability").innerText = probability.toFixed(2); // Atualiza a probabilidade
-        }
 
-      }
-
-      // Função para enviar os dados ao servidor PHP
-      async function classifyData(data) {
-        try {
-          const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/classify_samples.php', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ ecgData: data }) // Enviar os dados como JSON
-          });
-
-          if (!response.ok) {
-            throw new Error('Erro ao enviar os dados ao servidor.');
-          }
-
-          const result = await response.json();
-          console.log('Dados enviados com sucesso:', result);
-          // Atualizar a div com os dados retornados do servidor
-          updateClassification(result.predict_class, result.probabilities[0].probability);
-        } catch (error) {
-          console.error('Erro ao enviar os dados:', error);
-          // Atualizar a div para exibir a mensagem de erro
-          const classContainer = document.getElementById('class-container');
-          const probabilityContainer = document.getElementById('probability-container');
-
-          classContainer.innerHTML = '<p class="text-danger">Erro ao classificar os dados.</p>';
-          probabilityContainer.innerHTML = '<p class="text-danger">' + error.message + '</p>';
-        }
-      }
-
-
-
-      function splitECGData(ecgData, intervalSize) {
-        const intervals = [];
-        for (let i = 0; i < ecgData.length; i += intervalSize) {
-          intervals.push(ecgData.slice(i, i + intervalSize));
-        }
-        return intervals;
-      }
-
-      function plotECGInterval(intervalData, samplingRate) {
-        const time = intervalData.map((_, index) => index / samplingRate);
-        const values = intervalData.map(point => point.value);
-        displayedData = values;
-        ecgChart.data.labels = time;
-        ecgChart.data.datasets[0].data = values;
-
-        ecgChart.update();
-      }
-
-
-      async function fetchAndPlotECG(patientId) {
-        try {
-          const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ patient_id: patientId })
-          });
-          const ecgData = await response.json();
-
-          if (ecgData.length > 0) {
-            const intervalSize = 1600;
-            const intervals = splitECGData(ecgData, intervalSize);
-
-            // Gera a lista de índices na interface
+          if (selectedPatient) {
+            console.log(
+              `Paciente ID ${selectedPatient} selecionado. Gráfico limpo. Clique no botão para iniciar a plotagem.`
+            );
+            
+            shouldStop = true; // Interrompe a execução atual
+            displayedData = []; // Limpa as 1600 amostras armazenadas
+            isPaused = false; // Retira o estado de pausa
+            //continueButton.disabled = true; // Desativa o botão novamente
+            ecgChart.data.labels = [];
+            ecgChart.data.datasets[0].data = [];
+            ecgChart.update();
+            document.getElementById("class").innerText = ""; // Atualiza a classe
+            document.getElementById("probability").innerText = "";
             const intervalList = document.getElementById('intervalList');
             intervalList.innerHTML = ''; // Limpa a lista anterior
+            const listContainer = document.getElementById('eight-class-list');
+            listContainer.innerHTML = '';
+            initializeClassList()
+          } else {
+            console.log("Nenhum paciente selecionado.");
+          }
+        }
 
-            intervals.forEach((interval, index) => {
-              // Calcula os limites do intervalo
-              const startIndex = index * intervalSize;
-              const endIndex = Math.min(startIndex + intervalSize - 1, ecgData.length - 1); // Garante que não exceda o tamanho total dos dados
+        // Função para atualizar a div com os dados de classificação
+        function updateEightClass(probabilities) {
+          const listContainer = document.getElementById('eight-class-list');
+          listContainer.classList.remove("d-none"); // Exibe o container da lista de 8 classes
+          listContainer.innerHTML = ''; // Limpa o conteúdo anterior
+          const spinner_8c = document.getElementById('SpinnerEightClassification');
+          spinner_8c.classList.add('d-none');
 
-              // Cria o item da lista
-              const listItem = document.createElement('li');
+          probabilities.forEach((probability, index) => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `<strong>${classNames[index]}:</strong> ${probability.toFixed(2)}%`;
+            listItem.style.marginBottom = "5px";
+            listContainer.appendChild(listItem);
+          });
+        }
 
-              // Adiciona o índice acima do intervalo
-              const indexText = document.createElement('span'); // Elemento para o índice
-              indexText.textContent = `Index ${index}: `; // Exibe "Intervalo X:"
-              indexText.style.fontWeight = 'bold'; // Opcional: deixa o texto em negrito
-              listItem.appendChild(indexText); // Adiciona o índice ao item da lista
+        // Função para atualizar a classificação e probabilidade na div
+        function updateClassification(className, probability) {
 
-              // Adiciona os limites do intervalo no mesmo item
-              const rangeText = document.createTextNode(`${startIndex} - ${endIndex}`); // Texto com os limites
-              listItem.appendChild(rangeText); // Adiciona o texto ao item da lista
+          const spinner = document.getElementById('SpinnerBinaryClassification');
 
-              // Adiciona evento de clique para plotar o intervalo correspondente
-              listItem.addEventListener('click', () => plotECGInterval(interval, samplingRate));
-              intervalList.appendChild(listItem);
+          if (className == 0) {
+            document.getElementById("class-container").classList.remove("d-none"); // Exibe o container da classe
+            document.getElementById("probability-container").classList.remove("d-none"); // Exibe o container da probabilidade
+            spinner.classList.add('d-none');
+            document.getElementById("class").innerText = "Normal"; // Atualiza a classe
+            document.getElementById("probability").innerText = probability.toFixed(2) + '%'; // Atualiza a probabilidade
+          } else {
+            document.getElementById("class-container").classList.remove("d-none"); // Exibe o container da classe
+            document.getElementById("probability-container").classList.remove("d-none"); // Exibe o container da probabilidade
+            spinner.classList.add('d-none');
+            document.getElementById("class").innerText = "Abnormal"; // Atualiza a classe
+            document.getElementById("probability").innerText = probability.toFixed(2) + '%'; // Atualiza a probabilidade
+          }
+
+        }
+
+        // Função para enviar os dados ao servidor PHP
+        async function classifyData(data) {
+          try {
+            const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/classify_samples.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ ecgData: data }) // Enviar os dados como JSON
             });
 
-            // Esconde o spinner após preencher a lista
-            spinner.classList.add('d-none');
+            if (!response.ok) {
+              throw new Error('Erro ao enviar os dados ao servidor.');
+            }
 
+            const result = await response.json();
+            console.log('Dados enviados com sucesso:', result);
+            // Atualizar a div com os dados retornados do servidor
+            updateClassification(result.binary_model.predict_class, result.binary_model.probabilities);
+            updateEightClass(result.eight_class_model.probabilities);
 
-            console.log("Dados divididos e lista gerada.");
-          } else {
-            console.log("Nenhum dado de ECG encontrado para este paciente.");
+          } catch (error) {
+            console.error('Erro ao enviar os dados:', error);
           }
-        } catch (error) {
-          console.error("Erro ao buscar dados de ECG:", error);
         }
-      }
 
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        function splitECGData(ecgData, intervalSize) {
+          const intervals = [];
+          for (let i = 0; i < ecgData.length; i += intervalSize) {
+            intervals.push(ecgData.slice(i, i + intervalSize));
+          }
+          return intervals;
+        }
+
+        function plotECGInterval(intervalData, samplingRate) {
+          const time = intervalData.map((_, index) => index / samplingRate);
+          const values = intervalData.map(point => point.value);
+          displayedData = values;
+          ecgChart.data.labels = time;
+          ecgChart.data.datasets[0].data = values;
+
+          ecgChart.update();
+        }
+
+        async function fetchAndPlotECG(patientId) {
+          try {
+            const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ patient_id: patientId })
+            });
+            const ecgData = await response.json();
+
+            if (ecgData.length > 0) {
+              const intervalSize = 1600;
+              const intervals = splitECGData(ecgData, intervalSize);
+
+              // Gera a lista de índices na interface
+              const intervalList = document.getElementById('intervalList');
+              intervalList.innerHTML = ''; // Limpa a lista anterior
+
+              intervals.forEach((interval, index) => {
+                // Calcula os limites do intervalo
+                const startIndex = index * intervalSize;
+                const endIndex = Math.min(startIndex + intervalSize - 1, ecgData.length - 1); // Garante que não exceda o tamanho total dos dados
+
+                // Cria o item da lista
+                const listItem = document.createElement('li');
+
+                // Adiciona o índice acima do intervalo
+                const indexText = document.createElement('span'); // Elemento para o índice
+                indexText.textContent = `Index ${index}: `; // Exibe "Intervalo X:"
+                indexText.style.fontWeight = 'bold'; // Opcional: deixa o texto em negrito
+                listItem.appendChild(indexText); // Adiciona o índice ao item da lista
+
+                // Adiciona os limites do intervalo no mesmo item
+                const rangeText = document.createTextNode(`${startIndex} - ${endIndex}`); // Texto com os limites
+                listItem.appendChild(rangeText); // Adiciona o texto ao item da lista
+
+                // Adiciona evento de clique para plotar o intervalo correspondente
+                listItem.addEventListener('click', () => plotECGInterval(interval, samplingRate));
+                intervalList.appendChild(listItem);
+              });
+
+              // Esconde o spinner após preencher a lista
+              spinner.classList.add('d-none');
+
+
+              console.log("Dados divididos e lista gerada.");
+            } else {
+              console.log("Nenhum dado de ECG encontrado para este paciente.");
+            }
+          } catch (error) {
+            console.error("Erro ao buscar dados de ECG:", error);
+          }
+        }
+
+      </script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
