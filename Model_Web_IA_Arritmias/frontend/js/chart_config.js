@@ -1,3 +1,5 @@
+// Configurações do gráfico
+
 const maxSamples = 1600; // Número máximo de amostras exibidas no gráfico
 const samplingRate = 360; // Frequência de amostragem em Hz
 let displayedData = []; // Array para armazenar os dados exibidos no gráfico        

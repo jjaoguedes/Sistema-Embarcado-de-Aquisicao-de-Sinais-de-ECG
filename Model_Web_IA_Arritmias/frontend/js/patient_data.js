@@ -1,3 +1,5 @@
+// Lidar com a lógica de carregamento de pacientes
+
 let patientSelect = document.getElementById('patient-select');
 
 // Função para carregar pacientes na lista de seleção

@@ -1,3 +1,5 @@
+// Funções relacionadas a classificação
+
 // Lista de nomes das classes
 const classNames = [
     "Normal Beat",
@@ -8,15 +10,21 @@ const classNames = [
     "Premature Ventricular",
     "Ventricular Flutter Wave",
     "Paced Beat"
-  ];
+];
+
+// Função auxiliar para criar itens de lista
+function createListItem(content) {
+    const listItem = document.createElement('li');
+    listItem.innerHTML = content;
+    listItem.classList.add('list-item'); // Estilo definido via CSS
+    return listItem;
+}
 
 // Inicializa a lista de classes
 function initializeClassList() {
     const listContainer = document.getElementById('eight-class-list');
     classNames.forEach((className) => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `<strong>${className}: </strong>`;
-        listItem.style.marginBottom = "5px";
+        const listItem = createListItem(`<strong>${className}: </strong>`);
         listContainer.appendChild(listItem);
     });
 }
@@ -24,38 +32,42 @@ function initializeClassList() {
 // Função para atualizar a div com os dados de classificação
 function updateEightClass(probabilities) {
     const listContainer = document.getElementById('eight-class-list');
-    listContainer.classList.remove("d-none"); // Exibe o container da lista de 8 classes
-    listContainer.innerHTML = ''; // Limpa o conteúdo anterior
-    const spinner_8c = document.getElementById('SpinnerEightClassification');
-    spinner_8c.classList.add('d-none');
+    const spinner = document.getElementById('SpinnerEightClassification');
 
+    // Exibir a lista e ocultar o spinner
+    listContainer.classList.remove('d-none');
+    spinner.classList.add('d-none');
+
+    // Limpar a lista existente
+    listContainer.innerHTML = '';
+
+    // Adicionar itens com as probabilidades
     probabilities.forEach((probability, index) => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `<strong>${classNames[index]}:</strong> ${probability.toFixed(2)}%`;
-        listItem.style.marginBottom = "5px";
+        const content = `<strong>${classNames[index]}:</strong> ${probability.toFixed(2)}%`;
+        const listItem = createListItem(content);
         listContainer.appendChild(listItem);
     });
 }
 
-// Função para atualizar a classificação e probabilidade na div
-function updateClassification(className, probability) {
-
+// Função auxiliar para exibir a classificação e probabilidade
+function displayClassification(classText, probability) {
+    const classContainer = document.getElementById('class-container');
+    const probabilityContainer = document.getElementById('probability-container');
     const spinner = document.getElementById('SpinnerBinaryClassification');
 
-    if (className == 0) {
-        document.getElementById("class-container").classList.remove("d-none"); // Exibe o container da classe
-        document.getElementById("probability-container").classList.remove("d-none"); // Exibe o container da probabilidade
-        spinner.classList.add('d-none');
-        document.getElementById("class").innerText = "Normal"; // Atualiza a classe
-        document.getElementById("probability").innerText = probability.toFixed(2) + '%'; // Atualiza a probabilidade
-    } else {
-        document.getElementById("class-container").classList.remove("d-none"); // Exibe o container da classe
-        document.getElementById("probability-container").classList.remove("d-none"); // Exibe o container da probabilidade
-        spinner.classList.add('d-none');
-        document.getElementById("class").innerText = "Abnormal"; // Atualiza a classe
-        document.getElementById("probability").innerText = probability.toFixed(2) + '%'; // Atualiza a probabilidade
-    }
+    // Exibir os contêineres e atualizar o conteúdo
+    classContainer.classList.remove('d-none');
+    probabilityContainer.classList.remove('d-none');
+    spinner.classList.add('d-none');
 
+    document.getElementById('class').innerText = classText;
+    document.getElementById('probability').innerText = `${probability.toFixed(2)}%`;
+}
+
+// Função para atualizar a classificação binária
+function updateBinaryClassification(className, probability) {
+    const classText = className === 0 ? "Normal" : "Abnormal";
+    displayClassification(classText, probability);
 }
 
 // Função para enviar os dados ao servidor PHP
@@ -63,9 +75,7 @@ async function classifyData(data) {
     try {
         const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/classify_samples.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ecgData: data }) // Enviar os dados como JSON
         });
 
@@ -75,8 +85,9 @@ async function classifyData(data) {
 
         const result = await response.json();
         console.log('Dados enviados com sucesso:', result);
-        // Atualizar a div com os dados retornados do servidor
-        updateClassification(result.binary_model.predict_class, result.binary_model.probabilities);
+
+        // Atualizar a interface com os resultados
+        updateBinaryClassification(result.binary_model.predict_class, result.binary_model.probabilities);
         updateEightClass(result.eight_class_model.probabilities);
 
     } catch (error) {

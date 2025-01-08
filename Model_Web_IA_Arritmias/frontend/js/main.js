@@ -1,62 +1,68 @@
-const fetchButton = document.getElementById('fetch-ecg-btn');
+// Inicializar funcionalidades, carregar dados iniciais, adicionar event listeners globais
 
-// Adiciona evento ao botão Load Data
-fetchButton.addEventListener('click', () => {
-    patientSelect = document.getElementById('patient-select');
-    const patientId = patientSelect.value;
-    intervalList.innerHTML = ''; // Limpa a lista anterior
-    // Mostrar o spinner
-    const spinner = document.getElementById('spinner');
-    spinner.classList.remove('d-none');
+// Elementos do DOM
+const fetchButton = document.getElementById('fetch-ecg-btn');
+const classifyButton = document.getElementById('classifyButton');
+
+// Função para exibir ou ocultar elementos
+function toggleElementVisibility(elementId, show) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.classList.toggle('d-none', !show);
+    }
+}
+
+// Evento para carregar os dados do paciente
+fetchButton.addEventListener('click', async () => {
+    const patientSelect = document.getElementById('patient-select');
+    const patientId = patientSelect?.value;
+
+    // Limpa a lista anterior e mostra o spinner
+    const intervalList = document.getElementById('intervalList');
+    intervalList.innerHTML = '';
+    toggleElementVisibility('spinner', true);
+
     if (patientId) {
         console.log(`Iniciando plotagem para o paciente ID ${patientId}`);
-        shouldStop = false; // Interrompe a execução atual
+
+        // Reinicia o gráfico e busca os dados
+        shouldStop = false;
         ecgChart.data.labels = [];
         ecgChart.data.datasets[0].data = [];
         ecgChart.update();
-        fetchAndPlotECG(patientId);
+
+        await fetchAndPlotECG(patientId);
     } else {
         alert('Por favor, selecione um paciente primeiro.');
+        toggleElementVisibility('spinner', false);
     }
 });
 
-document.getElementById("classifyButton").addEventListener("click", () => {
+// Evento para enviar dados para classificação
+classifyButton.addEventListener('click', async () => {
+    // Esconde os contêineres e exibe os spinners
+    toggleElementVisibility('class-container', false);
+    toggleElementVisibility('probability-container', false);
+    toggleElementVisibility('eight-class-list', false);
+    toggleElementVisibility('SpinnerBinaryClassification', true);
+    toggleElementVisibility('SpinnerEightClassification', true);
 
-    // Mostrar o spinner
-    const spinner_cb = document.getElementById('SpinnerBinaryClassification');
-    // Esconde os elementos de classe e probabilidade
-    document.getElementById("class-container").classList.add("d-none"); // Oculta o container da classe
-    document.getElementById("probability-container").classList.add("d-none"); // Oculta o container da probabilidade
-
-    // Mostrar o spinner
-    const spinner_8c = document.getElementById('SpinnerEightClassification');
-    // Esconde os elementos de classe e probabilidade
-    document.getElementById("eight-class-list").classList.add("d-none"); // Oculta o container da classe
-
-    spinner_cb.classList.remove('d-none');
-    spinner_8c.classList.remove('d-none');
-
-    if (displayedData.length > 0) {
+    if (displayedData?.length > 0) {
         console.log("Enviando dados para classificação...");
-        // Enviar os dados ao servidor
-        classifyData(displayedData)
-            .then(response => {
-                console.log("Classificação concluída:", response);
 
-            })
-            .catch(error => {
-                console.error("Erro ao classificar dados:", error);
-
-            });
-
-
+        try {
+            const response = await classifyData(displayedData);
+            console.log("Classificação concluída:", response);
+        } catch (error) {
+            console.error("Erro ao classificar dados:", error);
+        }
     } else {
         console.log("Nenhum dado disponível para classificação.");
     }
 });
 
+// Inicialização ao carregar a página
 window.onload = () => {
-    loadPatients(); // Função em patient_data.js
-    initializeClassList(); // Função em classification.js
-    //setupEventListeners(); // Função em main.js
+    loadPatients(); // Função definida em patient_data.js
+    initializeClassList(); // Função definida em classification.js
 };
