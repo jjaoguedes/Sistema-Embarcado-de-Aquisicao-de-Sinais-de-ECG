@@ -100,6 +100,7 @@ async function fetchAndPlotECG(patientId) {
 
             const intervalList = document.getElementById('intervalList');
             clearIntervalList();
+            initializeClassList();
 
             intervals.forEach((interval, index) => {
                 const startIndex = index * intervalSize;
