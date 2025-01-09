@@ -38,6 +38,8 @@ function clearClassification() {
 function clearIntervalList() {
     const intervalList = document.getElementById('intervalList');
     intervalList.innerHTML = '';
+    const listContainer = document.getElementById('eight-class-list');
+    listContainer.innerHTML = '';
 }
 
 // Função para dividir os dados do ECG em intervalos
