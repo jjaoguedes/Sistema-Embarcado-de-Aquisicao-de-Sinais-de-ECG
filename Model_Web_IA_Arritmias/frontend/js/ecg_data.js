@@ -14,7 +14,7 @@ function onPatientChange() {
         clearECGData();
         clearClassification();
         clearIntervalList();
-        initializeClassList();
+        //initializeClassList();
     } else {
         console.log("Nenhum paciente selecionado.");
     }
@@ -108,7 +108,7 @@ async function fetchAndPlotECG(patientId) {
 
             const intervalList = document.getElementById('intervalList');
             clearIntervalList();
-            initializeClassList();
+            //initializeClassList();
 
             intervals.forEach((interval, index) => {
                 const startIndex = index * intervalSize; // Índice inicial do intervalo

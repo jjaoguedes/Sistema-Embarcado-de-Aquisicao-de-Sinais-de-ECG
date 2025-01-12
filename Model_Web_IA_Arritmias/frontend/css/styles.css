@@ -14,6 +14,20 @@
     /* Fundo escuro */
 }
 
+ .chart-container-binary {
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente (se necessário) */
+    height: 100%; /* Adapte conforme o contexto */
+  }
+
+  .chart-container-8c {
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente (se necessário) */
+    height: 100%; /* Adapte conforme o contexto */
+  }
+
 .ecgChart {
     margin-left: 0; width: 80%; max-width: 80%;
 }

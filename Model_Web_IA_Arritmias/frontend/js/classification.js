@@ -29,24 +29,94 @@ function initializeClassList() {
     });
 }
 
-// Função para atualizar a div com os dados de classificação
+function updateChart(classification, probability) {
+    // Define cores e rótulos para as classes
+    const labels = ['Normal', 'Anormal'];
+    const colors = {
+      normal: {
+        background: 'rgba(75, 192, 192, 0.2)', // Verde claro
+        border: 'rgba(75, 192, 192, 1)'        // Verde escuro
+      },
+      abnormal: {
+        background: 'rgba(255, 99, 132, 0.2)', // Vermelho claro
+        border: 'rgba(255, 99, 132, 1)'        // Vermelho escuro
+      }
+    };
+  
+    // Seleciona cores com base na classificação
+    const selectedColors = classification === 0 ? colors.normal : colors.abnormal;
+  
+    // Atualiza os dados do gráfico
+    myDoughnutChart.data = {
+      labels: labels, // Rótulos
+      datasets: [{
+        data: [probability * 100, (1 - probability) * 100], // Probabilidade em porcentagem
+        backgroundColor: [
+          selectedColors.background,
+          'rgba(201, 203, 207, 0.2)' // Cinza claro para o restante
+        ],
+        borderColor: [
+          selectedColors.border,
+          'rgba(201, 203, 207, 1)' // Cinza escuro para o restante
+        ],
+        borderWidth: 1
+      }]
+    };
+  
+    // Atualiza o gráfico para refletir as mudanças
+    myDoughnutChart.update();
+  
+    // Atualiza o texto de probabilidade
+    document.getElementById('probability').textContent = `${(probability * 100).toFixed(2)}% (${classification === 0 ? 'Normal' : 'Anormal'})`;
+  }
+
+// Função para atualizar o gráfico e a lista com as probabilidades de classificação
 function updateEightClass(probabilities) {
-    const listContainer = document.getElementById('eight-class-list');
-    const spinner = document.getElementById('SpinnerEightClassification');
+  const listContainer = document.getElementById('eight-class-list');
+  const spinner = document.getElementById('SpinnerEightClassification');
 
-    // Exibir a lista e ocultar o spinner
-    listContainer.classList.remove('d-none');
-    spinner.classList.add('d-none');
+  // Exibir a lista e ocultar o spinner
+  listContainer.classList.remove('d-none');
+  spinner.classList.add('d-none');
 
-    // Limpar a lista existente
-    listContainer.innerHTML = '';
+  // Limpar a lista existente
+  listContainer.innerHTML = '';
 
-    // Adicionar itens com as probabilidades
-    probabilities.forEach((probability, index) => {
-        const content = `<strong>${classNames[index]}:</strong> ${probability.toFixed(2)}%`;
-        const listItem = createListItem(content);
-        listContainer.appendChild(listItem);
-    });
+  // Adicionar itens com as probabilidades na lista
+  probabilities.forEach((probability, index) => {
+      const content = `<strong>${classNames[index]}:</strong> ${probability.toFixed(2)}%`;
+      const listItem = createListItem(content);
+      listContainer.appendChild(listItem);
+  });
+
+  // Atualizar os dados do gráfico
+  myDoughnutChart_8c.data.datasets[0].data = [];
+  myDoughnutChart_8c.data.datasets[0].data = probabilities;
+  myDoughnutChart_8c.update(); // Atualizar o gráfico para refletir os novos dados
+}
+
+// Função para atualizar o gráfico de classificação binária
+function updateChart(className, probability) {
+  // Definir rótulo e cor com base na classe
+  const label = className === 0 ? "Normal" : "Abnormal";
+  const color = className === 0 ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)';
+
+ // Atualizando os dados do gráfico
+ myDoughnutChart.data.labels = []; // Apenas o rótulo da classe escolhida
+ myDoughnutChart.data.datasets[0].data = []; // Apenas a probabilidade da classe
+ myDoughnutChart.data.datasets[0].backgroundColor = []; // Cor correspondente
+ myDoughnutChart.data.datasets[0].borderColor = []; // Cor correspondente
+
+
+  // Atualizando os dados do gráfico
+  myDoughnutChart.data.labels = [label]; // Apenas o rótulo da classe escolhida
+  myDoughnutChart.data.datasets[0].data = [probability]; // Apenas a probabilidade da classe
+  myDoughnutChart.data.datasets[0].backgroundColor = [color]; // Cor correspondente
+  myDoughnutChart.data.datasets[0].borderColor = [color]; // Cor correspondente
+
+
+  // Atualizando o gráfico
+  myDoughnutChart.update();
 }
 
 // Função auxiliar para exibir a classificação e probabilidade
@@ -64,10 +134,15 @@ function displayClassification(classText, probability) {
     document.getElementById('probability').innerText = `${probability.toFixed(2)}%`;
 }
 
-// Função para atualizar a classificação binária
+// Modificação da função updateBinaryClassification
 function updateBinaryClassification(className, probability) {
-    const classText = className === 0 ? "Normal" : "Abnormal";
-    displayClassification(classText, probability);
+  const classText = className === 0 ? "Normal" : "Abnormal";
+
+  // Atualizar a exibição de classificação e probabilidade
+  displayClassification(classText, probability);
+
+  // Atualizar o gráfico
+  updateChart(className, probability);
 }
 
 // Função para enviar os dados ao servidor PHP
@@ -89,7 +164,7 @@ async function classifyData(data) {
         // Atualizar a interface com os resultados
         updateBinaryClassification(result.binary_model.predict_class, result.binary_model.probabilities);
         updateEightClass(result.eight_class_model.probabilities);
-
+        updateChart(result.binary_model.predict_class, result.binary_model.probabilities);
     } catch (error) {
         console.error('Erro ao enviar os dados:', error);
     }

@@ -56,6 +56,9 @@
       <div class="col-md-6 col-sm-12 mb-3">
         <div class="bottom-left-div border rounded p-3" style="margin-left: 0; width: 100%; max-width: 100%;">
           <h5 class="border-bottom pb-2 mb-3">Binary classification</h5>
+          <div id="chart-container-binary" class="d-flex justify-content-center">
+            <canvas id="myDoughnutChart" width="250" height="250  "></canvas>
+          </div>
           <div id="class-container">
             <p><strong>Class:</strong> <span id="class"></span></p>
           </div>
@@ -72,6 +75,9 @@
       <div class="col-md-6 col-sm-12 mb-3">
         <div class="bg-light border rounded p-3" style="width: 100%; max-width: 100%;">
           <h5 class="border-bottom pb-2 mb-3">Eight - Class Classification</h5>
+          <div id="chart-container-8c" class="d-flex justify-content-center">
+            <canvas id="DoughnutChart_8c" width="350" height="350"></canvas>
+          </div>
           <ul id="eight-class-list" style="padding: 0; list-style: none;"></ul>
           <div class="d-flex justify-content-center">
             <div class="spinner-border d-none" id="SpinnerEightClassification"></div>
@@ -83,6 +89,8 @@
       <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-chart-area-background"></script>
 
       <script src="js/chart_config.js?v=2"></script>
+      <script src="js/chart_config_binary.js"></script>
+      <script src="js/chart_config_8c.js"></script>
 
       <script src="js/classification.js"></script>
       <script src="js/ecg_data.js"></script>

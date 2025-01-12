@@ -64,5 +64,5 @@ classifyButton.addEventListener('click', async () => {
 // Inicialização ao carregar a página
 window.onload = () => {
     loadPatients(); // Função definida em patient_data.js
-    initializeClassList(); // Função definida em classification.js
+    //initializeClassList(); // Função definida em classification.js
 };
