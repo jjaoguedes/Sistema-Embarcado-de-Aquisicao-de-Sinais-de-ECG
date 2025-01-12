@@ -1,4 +1,5 @@
 .chart-container {
+    
     position: relative;
     /* Posicionamento relativo para ajustar facilmente */
     left: 0;
@@ -8,13 +9,13 @@
     overflow-x: hidden;
     border: 1px solid #ddd;
     padding: 10px;
-    background-color: #1c1c1c;
+    background-color: #FFFFFF;
+    margin-left: 0; width: 100%; max-width: 100%;
     /* Fundo escuro */
 }
 
-#ecgChart {
-    width: 100%;
-    height: 100%;
+.ecgChart {
+    margin-left: 0; width: 80%; max-width: 80%;
 }
 
 /* Contêiner da lista de intervalos */

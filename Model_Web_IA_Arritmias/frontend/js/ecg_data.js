@@ -52,32 +52,40 @@ function splitECGData(ecgData, intervalSize) {
 }
 
 // Função para plotar um intervalo de ECG
-function plotECGInterval(intervalData, samplingRate) {
-    const time = intervalData.map((_, index) => index / samplingRate);
+function plotECGInterval(intervalData, samplingRate, intervalIndex, intervalSize) {
+    // Calcular o tempo de início para o intervalo específico
+    const startTime = intervalIndex * (intervalSize / samplingRate); // Cada intervalo começa após o anterior
+    const time = intervalData.map((_, index) => (startTime + (index / samplingRate)).toFixed(2));    // Cada amostra tem um tempo específico
+
     const values = intervalData.map(point => point.value);
 
+    clearECGData()
+    // Atualiza os dados no gráfico
     displayedData = values;
-    ecgChart.data.labels = time;
-    ecgChart.data.datasets[0].data = values;
+    ecgChart.data.labels = time; // Atualiza o eixo X com os tempos específicos para o intervalo
+    ecgChart.data.datasets[0].data = values; // Atualiza o eixo Y com os valores do ECG
     ecgChart.update();
 }
 
+
 // Função auxiliar para criar itens de lista
-function createIntervalListItem(index, startIndex, endIndex, onClick) {
+function createIntervalListItem(index, startIndex, endIndex, intervalSize, onClick) {
     const listItem = document.createElement('li');
     listItem.classList.add('interval-list-item'); // Classe CSS para estilo
 
     const indexText = document.createElement('span');
-    indexText.textContent = `Index ${index}: `;
+    indexText.textContent = `Intervalo ${index}: `;
     indexText.classList.add('interval-index'); // Classe CSS para estilo
     listItem.appendChild(indexText);
 
     const rangeText = document.createTextNode(`${startIndex} - ${endIndex}`);
     listItem.appendChild(rangeText);
 
-    listItem.addEventListener('click', onClick);
+    // Passa o índice e o tamanho do intervalo para a função de clique
+    listItem.addEventListener('click', () => onClick(index, intervalSize));
     return listItem;
 }
+
 
 // Função para buscar e plotar os dados do ECG
 async function fetchAndPlotECG(patientId) {
@@ -95,7 +103,7 @@ async function fetchAndPlotECG(patientId) {
         const ecgData = await response.json();
 
         if (ecgData.length > 0) {
-            const intervalSize = 1600;
+            const intervalSize = 1600; // Tamanho de cada intervalo
             const intervals = splitECGData(ecgData, intervalSize);
 
             const intervalList = document.getElementById('intervalList');
@@ -103,10 +111,17 @@ async function fetchAndPlotECG(patientId) {
             initializeClassList();
 
             intervals.forEach((interval, index) => {
-                const startIndex = index * intervalSize;
+                const startIndex = index * intervalSize; // Índice inicial do intervalo
                 const endIndex = Math.min(startIndex + intervalSize - 1, ecgData.length - 1);
 
-                const listItem = createIntervalListItem(index, startIndex, endIndex, () => plotECGInterval(interval, samplingRate));
+                // Passa o índice e o tamanho do intervalo para plotECGInterval
+                const listItem = createIntervalListItem(
+                    index,
+                    startIndex,
+                    endIndex,
+                    intervalSize,
+                    (intervalIndex, size) => plotECGInterval(interval, samplingRate, intervalIndex, size)
+                );
                 intervalList.appendChild(listItem);
             });
 
