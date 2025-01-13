@@ -86,6 +86,6 @@ async function classifyData(data) {
     updateBinaryClassification(result.binary_model.predict_class, result.binary_model.probabilities);
     updateEightClassification(result.eight_class_model.probabilities);
   } catch (error) {
-    console.error('Erro ao enviar os dados:', error);
+    alert('Erro ao enviar os dados:', error);
   }
 }

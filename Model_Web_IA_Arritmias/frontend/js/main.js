@@ -2,7 +2,7 @@
 
 // Elementos do DOM
 const fetchButton = document.getElementById('fetch-ecg-btn');
-const classifyButton = document.getElementById('classifyButton');
+let classifyButton = document.getElementById('classifyButton');
 
 // Função para exibir ou ocultar elementos
 function toggleElementVisibility(elementId, show) {
@@ -12,27 +12,39 @@ function toggleElementVisibility(elementId, show) {
     }
 }
 
-// Evento para carregar os dados do paciente
-fetchButton.addEventListener('click', async () => {
-    const patientSelect = document.getElementById('patient-select');
-    const patientId = patientSelect?.value;
+// Variável para controlar se o botão já foi habilitado
+let isButtonEnabled = false;
 
-    // Limpa a lista anterior e mostra o spinner
-    clearIntervalList();
-    toggleElementVisibility('spinner', true);
+// Atualizar o gráfico ao selecionar um paciente e desa
+function onPatientChange() {
+    const patientSelect = document.getElementById("patient-select");
+    const selectedPatient = patientSelect.value;
 
-    if (patientId) {
-        console.log(`Iniciando plotagem para o paciente ID ${patientId}`);
+    // Desabilita o botão
+    classifyButton.disabled = true;
+    // Variável para controle após desabilitar o botão
+    isButtonEnabled = false;
+    console.log(`Botão de classificação desabilitado!`);
 
-        // Reinicia o gráfico e busca os dados
+    if (selectedPatient) {
+        console.log(`Paciente ID ${selectedPatient} selecionado. Gráfico limpo. Gerando Plotagem do Intervalo.`);
+
+        // Limpa a lista anterior e mostra o spinner
+        clearIntervalList();
+        toggleElementVisibility('spinner', true);
+
+        // Limpa dados e elementos da interface
         clearECGData();
 
-        await fetchAndPlotECG(patientId);
+        // Inicio da Plotagem
+        fetchAndPlotECG(selectedPatient);
     } else {
         alert('Por favor, selecione um paciente primeiro.');
+        
+        // Ocultar spinner
         toggleElementVisibility('spinner', false);
     }
-});
+}
 
 function hideGraph_cb(){
 
@@ -44,10 +56,11 @@ function hideGraph_8c(){
     toggleElementVisibility('DoughnutChart_8c', false);
     toggleElementVisibility('SpinnerEightClassification', true);
 }
+
 // Evento para enviar dados para classificação
 classifyButton.addEventListener('click', async () => {
 
-    // Ocultar os gráficos e mostrar os spinners
+    // Oculta os gráficos e mostrar os spinners
     hideGraph_cb();
     hideGraph_8c();
 
@@ -61,7 +74,7 @@ classifyButton.addEventListener('click', async () => {
             console.error("Erro ao classificar dados:", error);
         }
     } else {
-        console.log("Nenhum dado disponível para classificação.");
+        alert("Nenhum dado disponível para classificação. Por favor, selecione um paciente primeiro.");
     }
 });
 

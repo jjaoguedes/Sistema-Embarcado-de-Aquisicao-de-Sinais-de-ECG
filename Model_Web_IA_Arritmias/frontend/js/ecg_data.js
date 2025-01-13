@@ -1,22 +1,11 @@
 // Funções relacionadas ao gráfico e plotagem do ECG
 
-// Atualizar o gráfico ao selecionar um paciente
-function onPatientChange() {
-    const patientSelect = document.getElementById("patient-select");
-    const selectedPatient = patientSelect.value;
-    const spinner = document.getElementById('spinner');
-    spinner.classList.add('d-none');
+function updateECG_Data(values, time){
 
-    if (selectedPatient) {
-        console.log(`Paciente ID ${selectedPatient} selecionado. Gráfico limpo. Clique no botão para iniciar a plotagem.`);
-
-        // Limpa dados e elementos da interface
-        clearECGData();
-        clearIntervalList();
-        //initializeClassList();
-    } else {
-        console.log("Nenhum paciente selecionado.");
-    }
+    displayedData = values;
+    ecgChart.data.labels = time; // Atualiza o eixo X com os tempos específicos para o intervalo
+    ecgChart.data.datasets[0].data = values; // Atualiza o eixo Y com os valores do ECG
+    ecgChart.update();
 }
 
 // Função auxiliar para limpar dados do ECG
@@ -26,7 +15,6 @@ function clearECGData() {
     ecgChart.data.datasets[0].data = [];
     ecgChart.update();
 }
-
 
 // Função auxiliar para limpar a lista de intervalos
 function clearIntervalList() {
@@ -51,14 +39,12 @@ function plotECGInterval(intervalData, samplingRate, intervalIndex, intervalSize
 
     const values = intervalData.map(point => point.value);
 
-    clearECGData()
-    // Atualiza os dados no gráfico
-    displayedData = values;
-    ecgChart.data.labels = time; // Atualiza o eixo X com os tempos específicos para o intervalo
-    ecgChart.data.datasets[0].data = values; // Atualiza o eixo Y com os valores do ECG
-    ecgChart.update();
-}
+    // Limpa dados do ECG
+    clearECGData();
 
+    // Atualiza os dados no gráfico
+    updateECG_Data(values, time);
+}
 
 // Função auxiliar para criar itens de lista
 function createIntervalListItem(index, startIndex, endIndex, intervalSize, onClick) {
@@ -73,8 +59,21 @@ function createIntervalListItem(index, startIndex, endIndex, intervalSize, onCli
     const rangeText = document.createTextNode(`${startIndex} - ${endIndex}`);
     listItem.appendChild(rangeText);
 
+     // Adiciona o evento de clique
+     listItem.addEventListener('click', () => {
+        // Habilita o botão apenas na primeira vez que for clicado
+        if (!isButtonEnabled) {
+            classifyButton.disabled = false; // Habilita o botão
+            isButtonEnabled = true; // Marca que o botão já foi habilitado
+            console.log("Botão de classificação habilitado!");
+        }
+
+        // Chama a função onClick com os parâmetros fornecidos
+        onClick(index, intervalSize, true);
+    });
+
     // Passa o índice e o tamanho do intervalo para a função de clique
-    listItem.addEventListener('click', () => onClick(index, intervalSize));
+    listItem.addEventListener('click', () => onClick(index, intervalSize, true));
     return listItem;
 }
 
@@ -122,7 +121,7 @@ async function fetchAndPlotECG(patientId) {
             console.log("Nenhum dado de ECG encontrado para este paciente.");
         }
     } catch (error) {
-        console.error("Erro ao buscar dados de ECG:", error);
+        alert("Erro ao buscar dados de ECG:", error);
     } finally {
         document.getElementById('spinner').classList.add('d-none'); // Esconde o spinner
     }
