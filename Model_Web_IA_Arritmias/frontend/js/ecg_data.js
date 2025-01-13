@@ -12,7 +12,6 @@ function onPatientChange() {
 
         // Limpa dados e elementos da interface
         clearECGData();
-        clearClassification();
         clearIntervalList();
         //initializeClassList();
     } else {
@@ -28,18 +27,11 @@ function clearECGData() {
     ecgChart.update();
 }
 
-// Função auxiliar para limpar classificações exibidas
-function clearClassification() {
-    document.getElementById("class").innerText = "";
-    document.getElementById("probability").innerText = "";
-}
 
 // Função auxiliar para limpar a lista de intervalos
 function clearIntervalList() {
     const intervalList = document.getElementById('intervalList');
     intervalList.innerHTML = '';
-    const listContainer = document.getElementById('eight-class-list');
-    listContainer.innerHTML = '';
 }
 
 // Função para dividir os dados do ECG em intervalos

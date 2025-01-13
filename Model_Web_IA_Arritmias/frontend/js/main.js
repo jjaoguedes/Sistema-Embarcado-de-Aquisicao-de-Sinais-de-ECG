@@ -18,18 +18,14 @@ fetchButton.addEventListener('click', async () => {
     const patientId = patientSelect?.value;
 
     // Limpa a lista anterior e mostra o spinner
-    const intervalList = document.getElementById('intervalList');
-    intervalList.innerHTML = '';
+    clearIntervalList();
     toggleElementVisibility('spinner', true);
 
     if (patientId) {
         console.log(`Iniciando plotagem para o paciente ID ${patientId}`);
 
         // Reinicia o gráfico e busca os dados
-        shouldStop = false;
-        ecgChart.data.labels = [];
-        ecgChart.data.datasets[0].data = [];
-        ecgChart.update();
+        clearECGData();
 
         await fetchAndPlotECG(patientId);
     } else {
@@ -38,14 +34,22 @@ fetchButton.addEventListener('click', async () => {
     }
 });
 
+function hideGraph_cb(){
+
+    toggleElementVisibility('SpinnerBinaryClassification', true);
+    toggleElementVisibility('DoughnutChart_cb', false);
+}
+function hideGraph_8c(){
+
+    toggleElementVisibility('DoughnutChart_8c', false);
+    toggleElementVisibility('SpinnerEightClassification', true);
+}
 // Evento para enviar dados para classificação
 classifyButton.addEventListener('click', async () => {
-    // Esconde os contêineres e exibe os spinners
-    toggleElementVisibility('class-container', false);
-    toggleElementVisibility('probability-container', false);
-    toggleElementVisibility('eight-class-list', false);
-    toggleElementVisibility('SpinnerBinaryClassification', true);
-    toggleElementVisibility('SpinnerEightClassification', true);
+
+    // Ocultar os gráficos e mostrar os spinners
+    hideGraph_cb();
+    hideGraph_8c();
 
     if (displayedData?.length > 0) {
         console.log("Enviando dados para classificação...");
@@ -64,5 +68,4 @@ classifyButton.addEventListener('click', async () => {
 // Inicialização ao carregar a página
 window.onload = () => {
     loadPatients(); // Função definida em patient_data.js
-    //initializeClassList(); // Função definida em classification.js
 };

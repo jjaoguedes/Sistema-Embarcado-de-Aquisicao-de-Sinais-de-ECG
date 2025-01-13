@@ -3,8 +3,8 @@ import mysql.connector
 from mysql.connector import Error
 
 #Variáveis do paciente, diretório do banco de dados pela wfdb, taxa de amostragem e id_patient do mySQL
-patient_code = '119'
-id_patient = 5
+patient_code = '100'
+id_patient = 1
 pn_dir = 'mitdb'
 sampling_rate = 360
 

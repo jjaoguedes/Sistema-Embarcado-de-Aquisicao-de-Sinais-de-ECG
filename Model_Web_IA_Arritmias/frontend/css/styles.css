@@ -19,13 +19,17 @@
     justify-content: center; /* Centraliza horizontalmente */
     align-items: center; /* Centraliza verticalmente (se necessário) */
     height: 100%; /* Adapte conforme o contexto */
+    margin-left: 0; width: 100%; max-width: 100%;
   }
 
-  .chart-container-8c {
+.chart-container-8c {
     display: flex;
     justify-content: center; /* Centraliza horizontalmente */
     align-items: center; /* Centraliza verticalmente (se necessário) */
     height: 100%; /* Adapte conforme o contexto */
+    width: 100%;
+    margin-left: 0; width: 100%; max-width: 100%;
+    
   }
 
 .ecgChart {

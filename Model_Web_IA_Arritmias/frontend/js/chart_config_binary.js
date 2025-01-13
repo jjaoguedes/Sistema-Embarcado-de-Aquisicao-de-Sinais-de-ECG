@@ -1,5 +1,5 @@
 // Configuração do gráfico binário
-const ctx_binary = document.getElementById('myDoughnutChart').getContext('2d');
+const ctx_binary = document.getElementById('DoughnutChart_cb').getContext('2d');
 const myDoughnutChart = new Chart(ctx_binary, {
     type: 'doughnut',
     data: {
