@@ -9,7 +9,7 @@ const ecgChart = new Chart(ctx, {
         datasets: [{
             label: 'ECG',
             data: [],
-            borderColor: '#0000000',
+            borderColor: '#ffffff',
             borderWidth: 1.5,
             fill: false,
             pointRadius: 0,
@@ -43,11 +43,11 @@ const ecgChart = new Chart(ctx, {
                     display: false
                 },
                 grid: {
-                    color: '#CCCCCC', // Cor cinza para a grid no eixo Y
+                    color: '#383838', // Cor cinza para a grid no eixo Y
                     lineWidth: 1.0 // Largura das linhas
                 },
                 ticks: {
-                    color: '#000000', // Cor preta para os valores do eixo Y
+                    color: '#ffffff', // Cor preta para os valores do eixo Y
                 }
             },
             x: {
@@ -57,11 +57,11 @@ const ecgChart = new Chart(ctx, {
                 min: 0,
                 max: maxSamples,
                 ticks: {
-                    color: '#000000', // Cor preta para os valores do eixo X
+                    color: '#ffffff', // Cor preta para os valores do eixo X
                     display: true // Exibe os rótulos no eixo X
                 },
                 grid: {
-                    color: '#CCCCCC', // Cor cinza para a grid no eixo X
+                    color: '#383838', // Cor cinza para a grid no eixo X
                     lineWidth: 1.0 // Largura das linhas
                 }
             }

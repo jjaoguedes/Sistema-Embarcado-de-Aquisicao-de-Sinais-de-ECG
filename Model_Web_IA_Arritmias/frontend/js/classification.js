@@ -54,7 +54,7 @@ function showGraph_cb() {
 function updateBinaryClassification(className, probability) {
   // Definir rótulo e cor com base na classe
   const label = className === 0 ? "Normal" : "Abnormal";
-  const color = className === 0 ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)';
+  const color = className === 0 ? 'rgb(0, 175, 108)' : 'rgb(194, 36, 36)';
 
   // Limpar os dados do gráfico Binário
   clearBinaryData();

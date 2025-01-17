@@ -7,12 +7,12 @@ const myDoughnutChart = new Chart(ctx_binary, {
         datasets: [{
             data: [50, 50], // Substitua pelos valores reais, se necessário
             backgroundColor: [
-                'rgb(0, 255, 0)', // Cor para "Normal"
-                'rgb(255, 0, 0)'  // Cor para "Anormal"
+                'rgb(0, 175, 108)', // Cor para "Normal"
+                'rgb(194, 36, 36)'  // Cor para "Anormal"
             ],
             borderColor: [
-                'rgb(0, 255, 0)',
-                'rgb(255, 0, 0)'
+                'rgb(0, 175, 108)', // Cor para "Normal"
+                'rgb(194, 36, 36)'  // Cor para "Anormal"
             ],
             borderWidth: 1
         }]

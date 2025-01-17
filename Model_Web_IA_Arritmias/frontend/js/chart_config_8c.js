@@ -19,24 +19,24 @@ const myDoughnutChart_8c = new Chart(ctx_8c, {
         datasets: [{
             data: [12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5], // Valores iniciais (serão atualizados dinamicamente)
             backgroundColor: [
-                'rgb(0, 255, 0)',
+                'rgb(0, 175, 108)', // Cor para "Normal"
                 'rgb(255, 255, 0)',
                 'rgb(255, 165, 0)',
-                'rgb(173, 216, 230)',
+                'rgb(22, 76, 94)',
                 'rgb(138, 43, 226)',
                 'rgb(255, 0, 0)',
                 'rgb(255, 105, 180)',
-                'rgb(0, 0, 255)'
+                'rgb(66, 66, 153)'
             ],
             borderColor: [
-                'rgb(0, 255, 0)',
+                'rgb(0, 175, 108)', // Cor para "Normal"
                 'rgb(255, 255, 0)',
                 'rgb(255, 165, 0)',
-                'rgb(173, 216, 230)',
+                'rgb(22, 76, 94)',
                 'rgb(138, 43, 226)',
                 'rgb(255, 0, 0)',
                 'rgb(255, 105, 180)',
-                'rgb(0, 0, 255)'
+               'rgb(66, 66, 153)'
             ],
             borderWidth: 1
         }]

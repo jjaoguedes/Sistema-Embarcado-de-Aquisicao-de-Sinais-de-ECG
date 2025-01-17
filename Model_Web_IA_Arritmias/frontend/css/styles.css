@@ -42,7 +42,7 @@
     /* Define a largura da div */
     max-width: 1350px;
     /* Define um limite máximo de largura, opcional */
-    overflow-x: auto;
+    overflow-y: auto;
     /* Ativa o scroll horizontal */
     white-space: nowrap;
     /* Garante que os itens não quebrem para a próxima linha */
