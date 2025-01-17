@@ -33,7 +33,9 @@
   }
 
 .ecgChart {
-    margin-left: 0; width: 80%; max-width: 80%;
+    margin-left: 0;
+    width: 80%; 
+    max-width: 80%;
 }
 
 /* Contêiner da lista de intervalos */
@@ -83,3 +85,7 @@
     background-color: #ddd;
     /* Cor de fundo ao passar o mouse */
 }
+
+.custom-height {
+    height: 250px; /* Defina a altura desejada */
+  }

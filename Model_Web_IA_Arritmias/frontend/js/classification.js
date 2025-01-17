@@ -1,27 +1,50 @@
 // Funções relacionadas a classificação
 
-function updateEightData(probabilities) {
+const myDoughnutChart0 = createDoughnutChart('DoughnutChart_8c_0', ["Normal Beat"], [12.5], ['rgb(0, 175, 108)']);
+const myDoughnutChart1 = createDoughnutChart('DoughnutChart_8c_1', ["Atrial Premature\nContraction"], [12.5], ['rgb(255, 255, 0)']);
+const myDoughnutChart2 = createDoughnutChart('DoughnutChart_8c_2', ["Normal Beat"], [12.5], ['rgb(255, 165, 0)']);
+const myDoughnutChart3 = createDoughnutChart('DoughnutChart_8c_3', ["Normal Beat"], [12.5], ['rgb(22, 76, 94)']);
+const myDoughnutChart4 = createDoughnutChart('DoughnutChart_8c_4', ["Normal Beat"], [12.5], ['rgb(138, 43, 226)']);
+const myDoughnutChart5 = createDoughnutChart('DoughnutChart_8c_5', ["Normal Beat"], [12.5], ['rgb(255, 0, 0)']);
+const myDoughnutChart6 = createDoughnutChart('DoughnutChart_8c_6', ["Normal Beat"], [12.5], ['rgb(255, 105, 180)']);
+const myDoughnutChart7 = createDoughnutChart('DoughnutChart_8c_7', ["Normal Beat"], [12.5], ['rgb(66, 66, 153)']);
 
-  // Atualizar os dados do gráfico de 8 classes
-  myDoughnutChart_8c.data.datasets[0].data = []; // Limpa os dados
-  myDoughnutChart_8c.data.datasets[0].data = probabilities;
-  myDoughnutChart_8c.update(); // Atualizando o gráfico de 8 classes
+
+// Função genérica para atualizar os dados de um gráfico de rosca
+function updateChartData(chart, probabilities, color) {
+    chart.data.labels = [];
+    chart.data.datasets[0].data = [];
+    chart.data.datasets[0].backgroundColor = []; // Cor correspondente
+    chart.data.datasets[0].borderColor = []; // Cor correspondente
+
+    chart.data.labels = [];
+    chart.data.datasets[0].data = [probabilities];
+    chart.data.datasets[0].backgroundColor = [color]; // Cor correspondente
+    chart.data.datasets[0].borderColor = [color]; // Cor correspondente
+    chart.update();
 }
 
-function showGraph_8c() {
-
-  toggleElementVisibility('DoughnutChart_8c', true);
-  toggleElementVisibility('SpinnerEightClassification', false);
+// Função para mostrar e atualizar um gráfico de 8 classes
+function showGraph(chartId, spinnerId, probabilities, color) {
+    toggleElementVisibility(chartId, true); // Mostra o gráfico
+    toggleElementVisibility(spinnerId, false); // Oculta o spinner
+    const chart = Chart.getChart(chartId);
+    if (chart) {
+        updateChartData(chart, probabilities, color);
+    }
 }
 
-// Função para atualizar o gráfico e a lista com as probabilidades de classificação
-function updateEightClassification(probabilities) {
-
-  // Mostrar gráfico de 8 classes
-  showGraph_8c();
-
-  // Atualizar os dados do gráfico de 8 classes
-  updateEightData(probabilities);
+// Função para inicializar múltiplos gráficos
+function initializeEightClassification(probabilities) {
+    showGraph(myDoughnutChart0, 'SpinnerEightClassification', probabilities[0], ['rgb(0, 175, 108)']);
+    showGraph(myDoughnutChart1, 'SpinnerEightClassification', probabilities[1], ['rgb(255, 255, 0)']);
+    //showGraph(myDoughnutChart2, 'SpinnerEightClassification', probabilities[2]);
+    //showGraph(myDoughnutChart3, 'SpinnerEightClassification', probabilities[3]);
+    //showGraph(myDoughnutChart4, 'SpinnerEightClassification', probabilities[4]);
+    //showGraph(myDoughnutChart5, 'SpinnerEightClassification', probabilities[5]);
+    //showGraph(myDoughnutChart6, 'SpinnerEightClassification', probabilities[7]);
+    //showGraph(myDoughnutChart7, 'SpinnerEightClassification', probabilities[8]);
+    //DoughnutChart_8c_0
 }
 
 function updateBynaryData(label, color, probability) {
@@ -84,7 +107,7 @@ async function classifyData(data) {
 
     // Atualizar a interface com os resultados
     updateBinaryClassification(result.binary_model.predict_class, result.binary_model.probabilities);
-    updateEightClassification(result.eight_class_model.probabilities);
+    initializeEightClassification(result.eight_class_model.probabilities);
   } catch (error) {
     alert('Erro ao enviar os dados:', error);
   }
