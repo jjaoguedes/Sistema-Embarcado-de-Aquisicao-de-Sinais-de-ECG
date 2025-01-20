@@ -12,7 +12,7 @@ if ($patient_id <= 0) {
 }
 
 // Configurações do banco de dados
-$host = "localhost";
+$host = "10.224.1.28";
 $username = "root"; // Altere conforme necessário
 $password = "";     // Altere conforme necessário
 $database = "arritmias";
@@ -29,7 +29,7 @@ try {
 }
 
 // Consulta para buscar os dados de ECG com base no ID do paciente
-$sql = "SELECT time, value FROM ecg WHERE id_patient = ?";
+$sql = "SELECT value FROM ecg WHERE id_patient = ?";
 
 try {
     $stmt = $conn->prepare($sql);
@@ -46,7 +46,6 @@ try {
 
     while ($row = $result->fetch_assoc()) {
         $ecg_data[] = [
-            "time" => $row['time'],
             "value" => $row['value'],
         ];
     }

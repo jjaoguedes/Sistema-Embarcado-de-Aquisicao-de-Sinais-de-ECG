@@ -81,7 +81,7 @@ function createIntervalListItem(index, startIndex, endIndex, intervalSize, onCli
 // Função para buscar e plotar os dados do ECG
 async function fetchAndPlotECG(patientId) {
     try {
-        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
+        const response = await fetch('http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ patient_id: patientId })
@@ -133,7 +133,7 @@ async function fetchAndPlotECG(patientId) {
 // Função para buscar e plotar os dados do ECG
 async function fetchAndPlotECGFiltered(patientId, startDate, endDate) {
     try {
-        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg_filtered.php', {
+        const response = await fetch('http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg_filtered.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ patient_id: patientId, start_date: startDate, end_date: endDate})
