@@ -1,6 +1,6 @@
 // Funções relacionadas ao gráfico e plotagem do ECG
 
-function updateECG_Data(values, time){
+function updateECG_Data(values, time) {
 
     displayedData = values;
     ecgChart.data.labels = time; // Atualiza o eixo X com os tempos específicos para o intervalo
@@ -52,15 +52,15 @@ function createIntervalListItem(index, startIndex, endIndex, intervalSize, onCli
     listItem.classList.add('interval-list-item'); // Classe CSS para estilo
 
     const indexText = document.createElement('span');
-    indexText.textContent = `Intervalo ${index}: `;
+    indexText.textContent = `Interval ${index}: `;
     indexText.classList.add('interval-index'); // Classe CSS para estilo
     listItem.appendChild(indexText);
 
-    const rangeText = document.createTextNode(`${startIndex} - ${endIndex}`);
+    const rangeText = document.createTextNode(`${startIndex} - ${endIndex} samples`);
     listItem.appendChild(rangeText);
 
-     // Adiciona o evento de clique
-     listItem.addEventListener('click', () => {
+    // Adiciona o evento de clique
+    listItem.addEventListener('click', () => {
         // Habilita o botão apenas na primeira vez que for clicado
         if (!isButtonEnabled) {
             classifyButton.disabled = false; // Habilita o botão
@@ -92,6 +92,9 @@ async function fetchAndPlotECG(patientId) {
         }
 
         const ecgData = await response.json();
+
+        // Imprime o JSON completo
+        console.log(ecgData);
 
         if (ecgData.length > 0) {
             const intervalSize = 1600; // Tamanho de cada intervalo
@@ -126,3 +129,55 @@ async function fetchAndPlotECG(patientId) {
         document.getElementById('spinner').classList.add('d-none'); // Esconde o spinner
     }
 }
+/*
+// Função para buscar e plotar os dados do ECG
+async function fetchAndPlotECGFiltered(patientId, startDate, endDate) {
+    try {
+        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg_filtered.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ patient_id: patientId, start_date: startDate, end_date: endDate})
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro na resposta do servidor.');
+        }
+
+        const ecgData = await response.json();
+
+        // Imprime o JSON completo
+        //console.log(ecgData);
+
+        if (ecgData.length > 0) {
+            const intervalSize = 1600; // Tamanho de cada intervalo
+            const intervals = splitECGData(ecgData, intervalSize);
+
+            const intervalList = document.getElementById('intervalList');
+            clearIntervalList();
+            //initializeClassList();
+
+            intervals.forEach((interval, index) => {
+                const startIndex = index * intervalSize; // Índice inicial do intervalo
+                const endIndex = Math.min(startIndex + intervalSize - 1, ecgData.length - 1);
+
+                // Passa o índice e o tamanho do intervalo para plotECGInterval
+                const listItem = createIntervalListItem(
+                    index,
+                    startIndex,
+                    endIndex,
+                    intervalSize,
+                    (intervalIndex, size) => plotECGInterval(interval, samplingRate, intervalIndex, size)
+                );
+                intervalList.appendChild(listItem);
+            });
+
+            console.log("Dados divididos e lista gerada.");
+        } else {
+            console.log("Nenhum dado de ECG encontrado para este paciente.");
+        }
+    } catch (error) {
+        alert("Erro ao buscar dados de ECG:", error);
+    } finally {
+        document.getElementById('spinner').classList.add('d-none'); // Esconde o spinner
+    }
+}*/

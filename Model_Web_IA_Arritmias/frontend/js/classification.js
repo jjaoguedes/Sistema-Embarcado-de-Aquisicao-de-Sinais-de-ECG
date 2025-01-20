@@ -1,59 +1,48 @@
 // Funções relacionadas a classificação
 
-const myDoughnutChart0 = createDoughnutChart('DoughnutChart_8c_0', ["Normal Beat"], [12.5], ['rgb(0, 175, 108)']);
-const myDoughnutChart1 = createDoughnutChart('DoughnutChart_8c_1', ["Atrial Premature\nContraction"], [12.5], ['rgb(255, 255, 0)']);
-const myDoughnutChart2 = createDoughnutChart('DoughnutChart_8c_2', ["Normal Beat"], [12.5], ['rgb(255, 165, 0)']);
-const myDoughnutChart3 = createDoughnutChart('DoughnutChart_8c_3', ["Normal Beat"], [12.5], ['rgb(22, 76, 94)']);
-const myDoughnutChart4 = createDoughnutChart('DoughnutChart_8c_4', ["Normal Beat"], [12.5], ['rgb(138, 43, 226)']);
-const myDoughnutChart5 = createDoughnutChart('DoughnutChart_8c_5', ["Normal Beat"], [12.5], ['rgb(255, 0, 0)']);
-const myDoughnutChart6 = createDoughnutChart('DoughnutChart_8c_6', ["Normal Beat"], [12.5], ['rgb(255, 105, 180)']);
-const myDoughnutChart7 = createDoughnutChart('DoughnutChart_8c_7', ["Normal Beat"], [12.5], ['rgb(66, 66, 153)']);
-
-
 // Função genérica para atualizar os dados de um gráfico de rosca
-function updateChartData(chart, probabilities, color) {
-    chart.data.labels = [];
-    chart.data.datasets[0].data = [];
-    chart.data.datasets[0].backgroundColor = []; // Cor correspondente
-    chart.data.datasets[0].borderColor = []; // Cor correspondente
+function updateChartData(chart, probabilities) {
 
-    chart.data.labels = [];
-    chart.data.datasets[0].data = [probabilities];
-    chart.data.datasets[0].backgroundColor = [color]; // Cor correspondente
-    chart.data.datasets[0].borderColor = [color]; // Cor correspondente
+    chart.data.datasets[0].data = [];
+    chart.options.plugins.doughnutCenterText.text = ``; // Atualiza o texto
+
+    chart.options.plugins.doughnutCenterText.text = `${probabilities}%`; // Atualiza o texto
+    chart.data.datasets[0].data = [probabilities, 100 - probabilities];
     chart.update();
 }
 
 // Função para mostrar e atualizar um gráfico de 8 classes
-function showGraph(chartId, spinnerId, probabilities, color) {
+function showGraph(chartId, spinnerId, probabilities) {
     toggleElementVisibility(chartId, true); // Mostra o gráfico
     toggleElementVisibility(spinnerId, false); // Oculta o spinner
     const chart = Chart.getChart(chartId);
     if (chart) {
-        updateChartData(chart, probabilities, color);
+        updateChartData(chart, probabilities);
     }
 }
 
 // Função para inicializar múltiplos gráficos
 function initializeEightClassification(probabilities) {
-    showGraph(myDoughnutChart0, 'SpinnerEightClassification', probabilities[0], ['rgb(0, 175, 108)']);
-    showGraph(myDoughnutChart1, 'SpinnerEightClassification', probabilities[1], ['rgb(255, 255, 0)']);
-    //showGraph(myDoughnutChart2, 'SpinnerEightClassification', probabilities[2]);
-    //showGraph(myDoughnutChart3, 'SpinnerEightClassification', probabilities[3]);
-    //showGraph(myDoughnutChart4, 'SpinnerEightClassification', probabilities[4]);
-    //showGraph(myDoughnutChart5, 'SpinnerEightClassification', probabilities[5]);
-    //showGraph(myDoughnutChart6, 'SpinnerEightClassification', probabilities[7]);
-    //showGraph(myDoughnutChart7, 'SpinnerEightClassification', probabilities[8]);
-    //DoughnutChart_8c_0
+
+    showContainer();
+
+    showGraph('DoughnutChart_8c_0', 'SpinnerEightClassification', probabilities[0]);
+    showGraph('DoughnutChart_8c_1', 'SpinnerEightClassification', probabilities[1]);
+    showGraph('DoughnutChart_8c_2', 'SpinnerEightClassification', probabilities[2]);
+    showGraph('DoughnutChart_8c_3', 'SpinnerEightClassification', probabilities[3]);
+    showGraph('DoughnutChart_8c_4', 'SpinnerEightClassification', probabilities[4]);
+    showGraph('DoughnutChart_8c_5', 'SpinnerEightClassification', probabilities[5]);
+    showGraph('DoughnutChart_8c_6', 'SpinnerEightClassification', probabilities[6]);
+    showGraph('DoughnutChart_8c_7', 'SpinnerEightClassification', probabilities[7]);
 }
 
 function updateBynaryData(label, color, probability) {
 
   // Atualizando os dados do gráfico binário
   myDoughnutChart.data.labels = [label]; // Apenas o rótulo da classe escolhida
-  myDoughnutChart.data.datasets[0].data = [probability]; // Apenas a probabilidade da classe
-  myDoughnutChart.data.datasets[0].backgroundColor = [color]; // Cor correspondente
-  myDoughnutChart.data.datasets[0].borderColor = [color]; // Cor correspondente
+  myDoughnutChart.data.datasets[0].data = [probability, 100 - probability]; // Apenas a probabilidade da classe
+  myDoughnutChart.options.plugins.doughnutCenterText.text = `${probability}%`;
+  myDoughnutChart.data.datasets[0].backgroundColor = [color, '#C0C0C0']; // Cor correspondente
 
   // Atualizando o gráfico binário
   myDoughnutChart.update();
@@ -61,6 +50,7 @@ function updateBynaryData(label, color, probability) {
 
 function clearBinaryData() {
 
+  myDoughnutChart.options.plugins.doughnutCenterText.text = '';
   myDoughnutChart.data.labels = []; // Apenas o rótulo da classe escolhida
   myDoughnutChart.data.datasets[0].data = []; // Apenas a probabilidade da classe
   myDoughnutChart.data.datasets[0].backgroundColor = []; // Cor correspondente

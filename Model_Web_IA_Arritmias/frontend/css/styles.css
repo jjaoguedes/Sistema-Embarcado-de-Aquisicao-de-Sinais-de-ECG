@@ -1,91 +1,62 @@
-.chart-container {
-    
-    position: relative;
-    /* Posicionamento relativo para ajustar facilmente */
-    left: 0;
-    /* Alinha o contêiner à esquerda */
-    width: 100vw;
-    height: 45vh;
-    overflow-x: hidden;
-    border: 1px solid #ddd;
-    padding: 10px;
-    background-color: #FFFFFF;
-    margin-left: 0; width: 100%; max-width: 100%;
-    /* Fundo escuro */
-}
-
- .chart-container-binary {
-    display: flex;
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente (se necessário) */
-    height: 100%; /* Adapte conforme o contexto */
-    margin-left: 0; width: 100%; max-width: 100%;
-  }
-
-.chart-container-8c {
-    display: flex;
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente (se necessário) */
-    height: 100%; /* Adapte conforme o contexto */
-    width: 100%;
-    margin-left: 0; width: 100%; max-width: 100%;
-    
-  }
-
 .ecgChart {
     margin-left: 0;
-    width: 80%; 
-    max-width: 80%;
+    width: 100%;
+    max-width: 100%;
 }
 
-/* Contêiner da lista de intervalos */
+/* Estilo do contêiner da lista */
 .interval-list-container {
     width: 100%;
-    /* Define a largura da div */
     max-width: 1350px;
-    /* Define um limite máximo de largura, opcional */
+    max-height: 300px;
     overflow-y: auto;
-    /* Ativa o scroll horizontal */
-    white-space: nowrap;
-    /* Garante que os itens não quebrem para a próxima linha */
     border: 1px solid #ccc;
-    /* Opcional: borda ao redor do contêiner */
     padding: 10px;
-    /* Espaçamento interno, opcional */
+    box-sizing: border-box;
+    background-color: #fff;
 }
 
-/* Estilo para criar uma lista horizontal */
+/* Estilo para os itens da lista */
 #intervalList {
     list-style-type: none;
-    /* Remove os marcadores da lista */
     margin: 0;
-    /* Remove margens */
     padding: 0;
-    /* Remove espaçamento interno */
-    display: inline-flex;
-    /* Alinha os itens horizontalmente */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 #intervalList li {
-    margin-right: 10px;
-    /* Espaçamento entre os itens */
-    padding: 5px 10px;
-    /* Espaçamento interno dos itens */
-    background-color: #f0f0f0;
-    /* Cor de fundo dos itens */
-    border: 1px solid #ccc;
-    /* Borda dos itens */
+    padding: 10px 15px;
+    background-color: #4e73df;
+    color: #fff;
+    border: 1px solid #4e73df;
     border-radius: 5px;
-    /* Bordas arredondadas */
     cursor: pointer;
-    /* Mostra o cursor de clique */
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    /* Centralização do texto */
+    text-align: center;
 }
 
 #intervalList li:hover {
-    background-color: #ddd;
-    /* Cor de fundo ao passar o mouse */
+    background-color: #2c55b4;
+    color: #fff;
+}
+
+/* Item ativo */
+#intervalList li.active {
+    background-color: #1e3a8a;
+    color: #fff;
+    border: 1px solid #1e3a8a;
 }
 
 .custom-height {
-    height: 250px; /* Defina a altura desejada */
-  }
+    height: 250px;
+    /* Defina a altura desejada */
+}
+
+.chartId {
+    width: 400px;
+    height: 400px;
+}

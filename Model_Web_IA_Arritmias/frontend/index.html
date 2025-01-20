@@ -29,8 +29,7 @@
   <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
-      id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
@@ -166,101 +165,105 @@
           <div class="accordion" id="accordionPanelsStayOpenExample">
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <h5 class="accordion-button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                <h5 class="accordion-button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne"
+                  aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
                   View Information
                   <img class="sidebar-card-illustration mb-2" src="img/arrow_down.svg" alt="...">
                 </h5>
               </h2>
               <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
-                  <!-- Content Row -->
-          <div class="row">
+                <!-- Content Row -->
+                <div class="row">
 
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"  style="color: #181818;">
-                        Total Patients</div>
-                      <div class="h2 mb-0 font-weight-bold" style="color: #181818;">45</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-user fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                        Exams Performed</div>
-                      <div class="h2 mb-0 font-weight-bold"  style="color: #181818;">500</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-tachometer-alt fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Model Accuracy - Binary
-                      </div>
-                      <div class="row no-gutters align-items-center">
-                        <div class="col-auto">
-                          <div class="h2 mb-0 mr-3 font-weight-bold"  style="color: #181818;">99.14%</div>
+                  <!-- Earnings (Monthly) Card Example -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                              style="color: #181818;">
+                              Total Patients
+                            </div>
+                            <div id="total-patients" class="h2 mb-0 font-weight-bold" style="color: #181818;">0</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-user fa-2x text-gray-300"></i>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div class="col-auto">
-                      <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
 
-            <!-- Pending Requests Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Model Accuracy - Multiclass
-                      </div>
-                      <div class="row no-gutters align-items-center">
-                        <div class="col-auto">
-                          <div class="h2 mb-0 mr-3 font-weight-bold"  style="color: #181818;">98.78%</div>
+                  <!-- Earnings (Monthly) Card Example -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                              Exams Performed</div>
+                            <div id="total-exams-performed" class="h2 mb-0 font-weight-bold" style="color: #181818;">0
+                            </div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-tachometer-alt fa-2x text-gray-300"></i>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div class="col-auto">
-                      <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                  </div>
+
+                  <!-- Earnings (Monthly) Card Example -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Model Accuracy - Binary
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                              <div class="col-auto">
+                                <div class="h2 mb-0 mr-3 font-weight-bold" style="color: #181818;">99.14%</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Pending Requests Card Example -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Model Accuracy -
+                              Multiclass
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                              <div class="col-auto">
+                                <div class="h2 mb-0 mr-3 font-weight-bold" style="color: #181818;">98.78%</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
               </div>
             </div>
           </div>
 
           <!-- Content Row -->
-
           <div class="row">
             <!-- Area Chart -->
             <div class="col-xl-12 col-lg-0">
@@ -268,191 +271,242 @@
 
                 <!-- Card Header - Dropdown -->
                 <div class="card-header d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold" style="color: #181818;">Electrocardiogram Signal</h6>
-                  <select
-                    style="background: #4e73df; border-radius: 5px; border-color: #4e73df; color: #fff; padding: 0.6cap;"
-                    id="patient-select" class="form-select" onchange="onPatientChange()">
-                    <option value="">Loading patients...</option>
-                  </select>
+                  <h6 class="m-0 font-weight-bold" style="color: #181818;">Electrocardiogram Signal </h6>
+
+                  <!-- Container para os elementos -->
+                  <div class="d-flex align-items-center" style="gap: 5px;">
+                    <!--
+                     Filtro de Data 
+                    <div class="d-flex align-items-center" style="gap: 10px; margin-left: 0px;">
+                       Data Inicial 
+                      <div>
+                        <input type="date" class="form-control" id="start_date" name="start_date" required>
+                      </div>
+                       Data Final 
+                      <div>
+                        <input type="date" class="form-control" id="end_date" name="end_date" required>
+                      </div>
+                       Botão Filtrar 
+                      <div>
+                        <button type="submit" class="btn btn-primary" id="filterButton">Filtrar</button>
+                      </div>
+                    </div> -->
+
+                    <!-- Div para o seletor de pacientes -->
+                    <div>
+                      <select
+                        style="background: #4e73df; border-radius: 5px; border-color: #4e73df; color: #fff; padding: 0.6cap;"
+                        id="patient-select" class="form-select" onchange="onPatientChange()">
+                        <option value="">Loading patients...</option>
+                      </select>
+                    </div>
+
+                    <!-- Div para o botão do modal -->
+                    <div>
+                      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#intervalListModal">
+                        View Interval
+                      </button>
+                    </div>
+
+                    <!-- Botão para Classify Data -->
+                    <div>
+                      <button id="classifyButton" class="btn btn-primary" disabled>Classify Data</button>
+                    </div>
+                  </div>
+
                 </div>
 
-                <!-- Card Body -->
-                <div class="card-body">
-                  <div style=" margin-left: 0; width: 100%; max-width: 100%;"
-                    class="interval-list-container">
-                    <ul style="column-gap: 1cap; color: #181818;" id="intervalList"
-                      class="list-unstyled" id="patient-select"></ul>
+                <div class="chart-area mt-2" style="height: 350px;">
+                  <canvas id="ecgChart"></canvas>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Modal for Interval List -->
+            <div class="modal fade" id="intervalListModal" tabindex="-1" aria-labelledby="intervalListModalLabel"
+              aria-hidden="false">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="intervalListModalLabel">Interval List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div style="width: 100%; max-width: 100%;" class="interval-list-container">
+                      <ul style="column-gap: 1cap; color: #181818;" id="intervalList" class="list-group-item"></ul>
+                      <div class="text-center">
+                        <div class="spinner-border d-none" id="spinner"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+
+
+            <!-- Content Row -->
+            <div class="row">
+              <!-- Content Column -->
+              <div class="col-lg-4 mb-4">
+                <!-- Illustrations -->
+                <div class="card shadow mb-4" style="height: auto; margin-left: auto; margin-right: 10px;">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold" style="color: #181818;">Binary Classification</h6>
+                  </div>
+                  <div class="card-body d-flex flex-column align-items-center">
                     <div class="text-center">
-                      <div class="spinner-border d-none" id="spinner"></div>
-                    </div>
-                  </div>
-
-                  <div class="chart-area mt-2" style="height: 350px;">
-                    <canvas id="ecgChart"></canvas>
-                  </div>
-                </div>
-
-                <button id="classifyButton" class="btn btn-primary" disabled>Classify Data</button>
-
-              </div>
-            </div>
-          </div>
-
-          <!-- Content Row -->
-          <div class="row">
-            <!-- Content Column -->
-            <div class="col-lg-4 mb-4" style="height: auto;">
-              <!-- Illustrations -->
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold" style="color: #181818;">Binary Classification</h6>
-                </div>
-                <div class="card-body d-flex flex-column align-items-center">
-                  <div class="text-center">
-                    <canvas id="DoughnutChart_cb" width="250" height="250"></canvas>
-                    <div class="d-flex justify-content-center">
-                      <div class="spinner-border d-none" id="SpinnerBinaryClassification"></div>
-                    </div>
-                  </div>
-                  <p class="text-dark">A threshold of 0.5 has been set for classification. If the probability of
-                    "Abnormal" is greater than or equal to 0.5, the signal is classified as Abnormal. Otherwise, the
-                    signal is classified as Normal.</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-8 mb-4" style="height: auto;">
-
-              <!-- Illustrations -->
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold" style="color: #181818;">Multiclass Classification</h6>
-                </div>
-                <div class="card-body">
-                  <div class="container">
-                    <!-- Primeira linha de gráficos -->
-                    <div class="row text-center">
-                      <div class="col-md-3 text-white d-flex flex-column align-items-center">
-                        <canvas id="DoughnutChart_8c_0" width="100px" height="100px"></canvas>
-                        <p class="chart-label" style="color: #181818;">Normal Beat</p>
-                      </div>
-                      <div class="col-md-3 text-white d-flex flex-column align-items-center">
-                        <canvas id="DoughnutChart_8c_1" width="100px" height="100px"></canvas>
-                        <p class="chart-label" style="color: #181818;">Atrial Premature Contraction</p>
-                      </div>
-                      <div class="col-md-3 text-white d-flex flex-column align-items-center">
-                        <canvas id="DoughnutChart_8c_2" width="100px" height="100px"></canvas>
-                        <p class="chart-label" style="color: #181818;">Ventricular Escape Beat</p>
-                      </div>
-                      <div class="col-md-3 text-white d-flex flex-column align-items-center">
-                        <canvas id="DoughnutChart_8c_3" width="100px" height="100px"></canvas>
-                        <p class="chart-label" style="color: #181818;">Left Bundle Branch Block Beat</p>
+                      <canvas id="DoughnutChart_cb" width="200" height="200"></canvas>
+                      <div class="d-flex justify-content-center">
+                        <div class="spinner-border d-none" id="SpinnerBinaryClassification"></div>
                       </div>
                     </div>
-
-                    <!-- Segunda linha de gráficos -->
-                    <div class="row text-center mt-4">
-                      <div class="col-md-3 text-white d-flex flex-column align-items-center">
-                        <canvas id="DoughnutChart_8c_4" width="100px" height="100px"></canvas>
-                        <p class="chart-label" style="color: #181818;">Right Bundle Branch Block Beat</p>
-                      </div>
-                      <div class="col-md-3 text-white d-flex flex-column align-items-center">
-                        <canvas id="DoughnutChart_8c_5" width="100px" height="100px"></canvas>
-                        <p class="chart-label" style="color: #181818;">Premature Ventricular</p>
-                      </div>
-                      <div class="col-md-3 text-white d-flex flex-column align-items-center">
-                        <canvas id="DoughnutChart_8c_6" width="100px" height="100px"></canvas>
-                        <p class="chart-label" style="color: #181818;">Ventricular Flutter Wave</p>
-                      </div>
-                      <div class="col-md-3 text-white d-flex flex-column align-items-center">
-                        <canvas id="DoughnutChart_8c_7" width="100px" height="100px"></canvas>
-                        <p class="chart-label" style="color: #181818;">Paced Beat</p>
-                      </div>
-                    </div>
+                    <p class="text-dark" style="text-align: justify;">A threshold of 0.5 has been set for
+                      classification. If the probability of
+                      "Abnormal" is greater than or equal to 0.5, the signal is classified as Abnormal. Otherwise, the
+                      signal is classified as Normal.</p>
                   </div>
-                  <div class="d-flex justify-content-center mt-4">
-                    <div class="spinner-border d-none" id="SpinnerEightClassification"></div>
-                  </div>
-                  <p class="text-dark mt-4">
-                    The model uses the Softmax function to calculate the probabilities, ensuring
-                    that the total sum is equal to 1. The class with the highest probability is selected as the
-                    classification result.
-                  </p>
                 </div>
               </div>
 
+              <div class="col-lg-8 mb-4">
+
+                <!-- Illustrations -->
+                <div class="card shadow mb-4" style="height: auto; width: 99%; max-width: 99%;; margin-left: 0px;">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold" style="color: #181818;">Multiclass Classification</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="container">
+                      <!-- Primeira linha de gráficos -->
+                      <div class="row text-center">
+                        <div class="col-md-3 text-white d-flex flex-column align-items-center">
+                          <canvas id="DoughnutChart_8c_0" width="150px" height="150px"></canvas>
+                          <p class="chart-label" style="color: #181818;">Normal Beat</p>
+                        </div>
+                        <div class="col-md-3 text-white d-flex flex-column align-items-center">
+                          <canvas id="DoughnutChart_8c_1" width="150px" height="150px"></canvas>
+                          <p class="chart-label" style="color: #181818;">Atrial Premature Contraction</p>
+                        </div>
+                        <div class="col-md-3 text-white d-flex flex-column align-items-center">
+                          <canvas id="DoughnutChart_8c_2" width="150px" height="150px"></canvas>
+                          <p class="chart-label" style="color: #181818;">Ventricular Escape Beat</p>
+                        </div>
+                        <div class="col-md-3 text-white d-flex flex-column align-items-center">
+                          <canvas id="DoughnutChart_8c_3" width="150px" height="150px"></canvas>
+                          <p class="chart-label" style="color: #181818;">Left Bundle Branch Block Beat</p>
+                        </div>
+                      </div>
+
+                      <!-- Segunda linha de gráficos -->
+                      <div class="row text-center mt-4">
+                        <div class="col-md-3 text-white d-flex flex-column align-items-center">
+                          <canvas id="DoughnutChart_8c_4" width="150px" height="150px"></canvas>
+                          <p class="chart-label" style="color: #181818;">Right Bundle Branch Block Beat</p>
+                        </div>
+                        <div class="col-md-3 text-white d-flex flex-column align-items-center">
+                          <canvas id="DoughnutChart_8c_5" width="150px" height="150px"></canvas>
+                          <p class="chart-label" style="color: #181818;">Premature Ventricular</p>
+                        </div>
+                        <div class="col-md-3 text-white d-flex flex-column align-items-center">
+                          <canvas id="DoughnutChart_8c_6" width="150px" height="150px"></canvas>
+                          <p class="chart-label" style="color: #181818;">Ventricular Flutter Wave</p>
+                        </div>
+                        <div class="col-md-3 text-white d-flex flex-column align-items-center">
+                          <canvas id="DoughnutChart_8c_7" width="150px" height="150px"></canvas>
+                          <p class="chart-label" style="color: #181818;">Paced Beat</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-4">
+                      <div class="spinner-border d-none" id="SpinnerEightClassification"></div>
+                    </div>
+
+                    <p class="text-dark mt-4" style="text-align: justify;">
+                      The model uses the Softmax function to calculate the probabilities, ensuring
+                      that the total sum is equal to 1. The class with the highest probability is selected as the
+                      classification result.
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
+            <!-- /.container-fluid -->
 
           </div>
-          <!-- /.container-fluid -->
+          <!-- End of Main Content -->
+
+          <!-- Footer -->
+          <footer class="sticky-footer">
+            <div class="container my-auto">
+              <div class="copyright text-center my-auto">
+                <span>Copyright &copy; AI rythmia 2021</span>
+              </div>
+            </div>
+          </footer>
+          <!-- End of Footer -->
 
         </div>
-        <!-- End of Main Content -->
-
-        <!-- Footer -->
-        <footer class="sticky-footer" >
-          <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-              <span>Copyright &copy; AI rythmia 2021</span>
-            </div>
-          </div>
-        </footer>
-        <!-- End of Footer -->
+        <!-- End of Content Wrapper -->
 
       </div>
-      <!-- End of Content Wrapper -->
+      <!-- End of Page Wrapper -->
 
-    </div>
-    <!-- End of Page Wrapper -->
+      <!-- Scroll to Top Button-->
+      <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+      </a>
 
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
-
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-            <a class="btn btn-primary" href="login.html">Logout</a>
+      <!-- Logout Modal-->
+      <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+              <a class="btn btn-primary" href="login.html">Logout</a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <!-- Bootstrap core JavaScript-->
+      <script src="vendor/jquery/jquery.min.js"></script>
+      <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+      <!-- Core plugin JavaScript-->
+      <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+      <!-- Custom scripts for all pages-->
+      <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+      <!-- Page level plugins -->
+      <script src="vendor/chart.js/Chart.min.js"></script>
 
-    <!-- others -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-chart-area-background"></script>
-    <script src="js/chart_config.js"></script>
-    <script src="js/chart_config_binary.js"></script>
-    <script src="js/chart_config_8c.js"></script>
-    <script src="js/classification.js"></script>
-    <script src="js/ecg_data.js"></script>
-    <script src="js/main.js?v=2"></script>
-    <script src="js/patient_data.js"></script>
+      <!-- others -->
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-chart-area-background"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+      <script src="js/chart_config.js"></script>
+      <script src="js/chart_config_binary.js"></script>
+      <script src="js/chart_config_8c.js"></script>
+      <script src="js/classification.js"></script>
+      <script src="js/ecg_data.js"></script>
+      <script src="js/main.js?v=2"></script>
+      <script src="js/patient_data.js"></script>
 
 </body>
 

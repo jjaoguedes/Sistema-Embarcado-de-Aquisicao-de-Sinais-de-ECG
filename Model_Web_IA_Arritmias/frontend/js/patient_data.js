@@ -1,6 +1,7 @@
 // Lidar com a lógica de carregamento de pacientes
 
-let patientSelect = document.getElementById('patient-select');
+// Selecionar o elemento do total de pacientes
+let totalPatientsDiv = document.getElementById('total-patients');
 
 // Função para carregar pacientes na lista de seleção
 async function loadPatients() {
@@ -19,15 +20,20 @@ async function loadPatients() {
             patients.forEach(patient => {
                 const option = document.createElement('option');
                 option.value = patient.id_patient; // Define o ID do paciente como valor
-                option.textContent = `${patient.name} (${patient.age} anos)`;
+                option.textContent = `${patient.name}`;
                 patientSelect.appendChild(option);
             });
 
+            // Atualizar o total de pacientes na div
+            totalPatientsDiv.textContent = `${patients.length}`;
+
         } else {
             patientSelect.innerHTML = '<option value="">No patients found</option>';
+            totalPatientsDiv.textContent = '0'; // Atualizar para 0 se não houver pacientes
         }
     } catch (error) {
         console.error('Erro na requisição:', error);
         patientSelect.innerHTML = '<option value="">Error loading patients</option>';
+        totalPatientsDiv.textContent = '0'; // Atualizar para 0 em caso de erro
     }
 }
