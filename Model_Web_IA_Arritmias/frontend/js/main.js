@@ -4,6 +4,8 @@
 const fetchButton = document.getElementById('fetch-ecg-btn');
 let totalexamsDiv = document.getElementById('total-exams-performed');
 let classifyButton = document.getElementById('classifyButton');
+let loadButton = document.getElementById('LoadButton');
+
 // Variável para armazenar o valor do contador
 let count = 0;
 
@@ -42,9 +44,7 @@ function onPatientChange() {
 
         // Limpa dados e elementos da interface
         clearECGData();
-
-        // Inicio da Plotagem
-        fetchAndPlotECG(selectedPatient);
+        fetchAndPlotECG(selectedPatient, false);
     } else {
         alert('Por favor, selecione um paciente primeiro.');
 
@@ -108,24 +108,41 @@ classifyButton.addEventListener('click', async () => {
 
 // Seleciona o botão pelo ID
 const filterButton = document.getElementById('filterButton');
-/*
-// Adiciona o evento de clique ao botão
-filterButton.addEventListener('click', function(event) {
-  // Impede o envio do formulário, se necessário (caso o botão esteja dentro de um formulário)
-  event.preventDefault();
 
-  // Aqui você pode adicionar a lógica que deseja executar quando o botão for clicado
-  alert('Filtro aplicado!');
-  const patientSelect = document.getElementById("patient-select");
+// Adiciona o evento de clique ao botão
+filterButton.addEventListener('click', function (event) {
+    const patientSelect = document.getElementById("patient-select");
     const selectedPatient = patientSelect.value;
-  // Exemplo de manipulação: pegar os valores dos campos de filtro
-  const startDate = document.getElementById('start_date').value;
-  const endDate = document.getElementById('end_date').value;
-  
-  console.log('Data Inicial: ', startDate);
-  console.log('Data Final: ', endDate);
-  fetchAndPlotECG(selectedPatient, startDate, endDate);
-});*/
+
+    // Desabilita o botão
+    classifyButton.disabled = true;
+    // Variável para controle após desabilitar o botão
+    isButtonEnabled = false;
+    console.log(`Botão de classificação desabilitado!`);
+
+    if (selectedPatient) {
+        console.log(`Paciente ID ${selectedPatient} selecionado. Gráfico limpo. Gerando Plotagem do Intervalo.`);
+
+        // Limpa o contador de exams performed
+        count = 0;
+        totalexamsDiv.textContent = `${count}`; // Atualiza o texto do elemento
+
+        // Limpa a lista anterior e mostra o spinner
+        clearIntervalList();
+        toggleElementVisibility('spinner', true);
+
+        // Limpa dados e elementos da interface
+        clearECGData();
+
+        // Inicio da Plotagem
+        fetchAndPlotECG(selectedPatient, true);
+    } else {
+        alert('Por favor, selecione um paciente primeiro.');
+
+        // Ocultar spinner
+        toggleElementVisibility('spinner', false);
+    }
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     const intervalList = document.getElementById("intervalList");

@@ -275,22 +275,6 @@
 
                   <!-- Container para os elementos -->
                   <div class="d-flex align-items-center" style="gap: 5px;">
-                    <!--
-                     Filtro de Data 
-                    <div class="d-flex align-items-center" style="gap: 10px; margin-left: 0px;">
-                       Data Inicial 
-                      <div>
-                        <input type="date" class="form-control" id="start_date" name="start_date" required>
-                      </div>
-                       Data Final 
-                      <div>
-                        <input type="date" class="form-control" id="end_date" name="end_date" required>
-                      </div>
-                       Botão Filtrar 
-                      <div>
-                        <button type="submit" class="btn btn-primary" id="filterButton">Filtrar</button>
-                      </div>
-                    </div> -->
 
                     <!-- Div para o seletor de pacientes -->
                     <div>
@@ -308,6 +292,12 @@
                       </button>
                     </div>
 
+                    <div class="d-flex align-items-center" style="gap: 10px; margin-left: 0px;">
+                      <div>
+                        <button type="submit" class="btn btn-primary" id="filterButton">Filter Data</button>
+                      </div>
+                    </div>
+
                     <!-- Botão para Classify Data -->
                     <div>
                       <button id="classifyButton" class="btn btn-primary" disabled>Classify Data</button>
@@ -319,7 +309,6 @@
                 <div class="chart-area mt-2" style="height: 350px;">
                   <canvas id="ecgChart"></canvas>
                 </div>
-
               </div>
             </div>
 
@@ -329,7 +318,7 @@
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="intervalListModalLabel">Interval List</h5>
+                    <h5 style="color: #181818;" class="modal-title text-dark" id="intervalListModalLabel">Interval List</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
