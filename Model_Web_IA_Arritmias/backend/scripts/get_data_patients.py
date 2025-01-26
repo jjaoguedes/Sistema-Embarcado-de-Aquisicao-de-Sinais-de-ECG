@@ -10,7 +10,7 @@ sampling_rate = 360
 
 try:
     connection = mysql.connector.connect(
-        host="10.224.1.28",
+        host="localhost",
         user="root",
         password="",
         database="arritmias",

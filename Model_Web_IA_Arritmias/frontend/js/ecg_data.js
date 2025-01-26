@@ -155,7 +155,7 @@ function createIntervalListItem(index, startIndex, endIndex, intervalSize, onCli
 // Função para buscar e plotar dados do ECG (bruto ou filtrado)
 async function fetchAndPlotECG(patientId, showFiltered = false) {
     try {
-        const response = await fetch('http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
+        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ patient_id: patientId })
@@ -193,7 +193,7 @@ async function fetchAndPlotECG(patientId, showFiltered = false) {
 
             const filteredSignalNorm = normalizeData(filteredSignal);
 
-            const FIR_COEFFICIENTS = [0.0001, 0.0005, 0.0020, 0.0050, 0.0100, 0.0200, 0.0300, 0.0400, 0.0300, 0.0200, 0.0100, 0.0050, 0.0001];
+            const FIR_COEFFICIENTS = [0.0001, 0.0005, 0.0020, 0.0050, 0.00, 0.0200, 0.0300, 0.0400, 0.0300, 0.0200, 0.00, 0.0050, 0.0001];
             const ecgFIR = firFilter(filteredSignalNorm, FIR_COEFFICIENTS);
 
             ecgValues = normalizeData(ecgFIR); // Atualiza os valores para o sinal FIR filtrado

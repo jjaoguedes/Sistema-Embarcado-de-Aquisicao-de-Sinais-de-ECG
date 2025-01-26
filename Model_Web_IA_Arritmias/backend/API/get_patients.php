@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 
 // Configurações do banco de dados
-$host = "10.224.1.28";
+$host = "localhost";
 $username = "root"; // Altere conforme necessário
 $password = "";     // Altere conforme necessário
 $database = "arritmias"; // Nome correto do banco de dados
