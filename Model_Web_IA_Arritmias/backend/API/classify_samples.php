@@ -18,11 +18,11 @@ file_put_contents($temp_file, $data_json);
 // Caminhos para os scripts Python e modelos
 $python_script_cb = "C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/scripts/model_binary.py";
 $python_script_8c = "C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/scripts/model_eight_classes.py";
-$python_executable = "C:/Users/jvito/AppData/Local/Programs/Python/Python311/python.exe";
+$python_executable = "C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/python.exe";
 
 // Função para executar o script Python com diferentes modelos
 function execute_python_script($python_executable, $python_script, $temp_file) {
-    $command = 'set PYTHONPATH=C:/Users/jvito/AppData/Local/Programs/Python/Python311/Lib/site-packages && '
+    $command = 'set PYTHONPATH=C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/Lib/site-packages && '
              . escapeshellcmd($python_executable)
              . " " . escapeshellarg($python_script)
              . " " . escapeshellarg($temp_file);

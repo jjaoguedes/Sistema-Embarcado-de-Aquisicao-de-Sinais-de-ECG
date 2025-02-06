@@ -1,136 +1,181 @@
-#include <WiFi.h>
+#include <WiFi.h>  // Para ESP32
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 
-// Credenciais do WiFi
-const char* ssid = "CLARO_2GEA41ED";
-const char* password = "B8EA42ED";
+#define ECG_INPUT_PIN A0
 
-// URL do servidor Apache
-const char* serverURL = "http://192.168.0.121/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/insert_ecg_esp32.php";
+const int sampleRate = 360;                 // Hz
+const int numSamples = 10800;               // 30 segundos de coleta (360 amostras/s * 30s)
+const unsigned long sampleInterval = 2778;  // Intervalo de amostragem para 360Hz (2778 µs)
 
-const unsigned long sampleInterval = 2780;   // Intervalo de amostragem ajustado para ~360Hz (2780 microssegundos)
-const unsigned long storageInterval = 4440;  // Tempo de armazenamento (4.44 segundos)
+// Buffer para armazenar os dados
+float valuesBuffer[numSamples];
+size_t bufferIndex = 0;
 
-// Buffers para armazenar dados
-std::vector<float> valuesBuffer;
-// Cria documento JSON
-StaticJsonDocument<120000> jsonDocument;
-unsigned long lastSampleTime = 0;
+// Configurações de Wi-Fi
+const char* ssid = "WP3-CETELI-2-IA";
+const char* password = "RioNhamunda";
 
-// Semáforo para sincronização
-SemaphoreHandle_t dataMutex;
+// Endereço do servidor
+const char* serverUrl = "http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/insert_ecg_esp32.php";
+
+// ID do paciente (substitua pelo ID real)
+const String id_patient = "15";
+const int batchSize = 100;  // Tamanho do lote
+
+// Servidor NTP
+const char* ntpServer = "pool.ntp.org";
+const long gmtOffset_sec = -14400;
+const int daylightOffset_sec = 0;
+String datetime = "";
 
 void setup() {
   Serial.begin(115200);
+  Serial.println("Iniciando coleta de ECG...");
 
-  // Configura WiFi
+  // Conecta ao Wi-Fi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
-    Serial.println("Conectando ao WiFi...");
+    Serial.println("Conectando ao Wi-Fi...");
   }
-  Serial.println("Conectado ao WiFi!");
+  Serial.println("Conectado ao Wi-Fi!");
 
-  // Inicializa semáforo
-  dataMutex = xSemaphoreCreateMutex();
-
-  // Inicia tarefas
-  xTaskCreatePinnedToCore(taskReadData, "ReadData", 4096, NULL, 1, NULL, 0);  // Núcleo 0
-  xTaskCreatePinnedToCore(taskSendData, "SendData", 4096, NULL, 1, NULL, 1);  // Núcleo 1
-}
-
-void taskReadData(void* pvParameters) {
-  while (true) {
-    unsigned long currentTime = micros();
-    if (currentTime - lastSampleTime >= sampleInterval) {
-      lastSampleTime = currentTime;
-
-      // Simula leitura do sensor
-      float valueECG = random(0, 2000) / 1000.0;  // Valores simulados entre 0.0 e 2.0
-
-      // Protege o acesso aos buffers
-      if (xSemaphoreTake(dataMutex, portMAX_DELAY)) {
-        valuesBuffer.push_back(valueECG);
-        xSemaphoreGive(dataMutex);
-      }
-    }
-    // Libera a CPU sem introduzir atrasos significativos
-    taskYIELD();
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  struct tm timeInfo;
+  while (!getLocalTime(&timeInfo)) {
+    Serial.println("Falha ao obter hora NTP");
+    delay(1000);
   }
+  Serial.println("Hora sincronizada com NTP.");
+
+  // Aguarda 2 segundos antes de começar a coleta
+  delay(1000);
+
+  // Inicio da coleta
+  datetime = getDatetime();
+  Serial.println("Datetime Inicial Armazendado");
+
 }
 
 
-void taskSendData(void* pvParameters) {
-  while (true) {
-    vTaskDelay(storageInterval / portTICK_PERIOD_MS);  // Aguarda o intervalo de envio
+String getDatetime() {
+  struct tm timeInfo;
+  if (getLocalTime(&timeInfo)) {
+    char datetime[20];
+    strftime(datetime, sizeof(datetime), "%Y-%m-%d %H:%M:%S", &timeInfo);
+    return String(datetime);
+  }
+  return "Falha ao obter hora";
+}
 
-    if (xSemaphoreTake(dataMutex, portMAX_DELAY)) {
-      if (!valuesBuffer.empty()) {
-        Serial.println("Enviando dados...");
-        sendData(valuesBuffer);
+void normalizeBuffer(float valuesBuffer[], int numSamples) {
+  float minVal = valuesBuffer[0];
+  float maxVal = valuesBuffer[0];
 
-        // Limpa os buffers após o envio
-        valuesBuffer.clear();
-        // Limpa buffers e JSON
-        valuesBuffer.clear();
-        valuesBuffer.shrink_to_fit();  // Libera memória extra
-        jsonDocument.clear();          // Limpa o JSON
-      }
-      xSemaphoreGive(dataMutex);
+  // Encontra o valor mínimo e máximo no buffer
+  for (int i = 0; i < numSamples; i++) {
+    if (valuesBuffer[i] < minVal) {
+      minVal = valuesBuffer[i];
     }
+    if (valuesBuffer[i] > maxVal) {
+      maxVal = valuesBuffer[i];
+    }
+  }
+
+  // Normaliza os valores para o intervalo [0, 1]
+  for (int i = 0; i < numSamples; i++) {
+    valuesBuffer[i] = (valuesBuffer[i] - minVal) / (maxVal - minVal);
   }
 }
 
-void sendData(const std::vector<float>& values) {
-  // Monitoramento da memória
-  Serial.println("Memória heap disponível: " + String(ESP.getFreeHeap()) + " bytes");
-  if (WiFi.status() == WL_CONNECTED) {
-    HTTPClient http;
-    http.begin(serverURL);
+void sendDataToServer(float valuesBuffer[], int numSamples) {
+  int totalBatches = (numSamples + batchSize - 1) / batchSize;  // Número total de lotes
 
+  for (int batch = 0; batch < totalBatches; batch++) {
+    // Calcula o tamanho necessário para o JSON
+    const size_t jsonSize = JSON_OBJECT_SIZE(2) + JSON_ARRAY_SIZE(batchSize) + batchSize * 10;
+    DynamicJsonDocument jsonDoc(jsonSize);
 
-    jsonDocument["patient_id"] = 1;
+    // Preenche o JSON
+    jsonDoc["id_patient"] = id_patient;
+    jsonDoc["start_datetime"] = datetime;  // Função para obter data/hora atual
 
-    // Adiciona os dados das medições
-    // Criação da estrutura measurements com value e datetime
-    JsonObject measurements = jsonDocument.createNestedObject("measurements");
-    JsonArray valuesArray = measurements.createNestedArray("value");
-    //JsonArray datetimeArray = measurements.createNestedArray("datetime");
-    Serial.println(values.size());
-    //Serial.println(timestamps.size());
-    for (size_t i = 0; i < values.size(); i++) {
-      valuesArray.add(values[i]);
-      //datetimeArray.add(timestamps[i]);
+    JsonArray valuesArray = jsonDoc.createNestedArray("values");
+
+    // Preenche o JSON com os valores do lote
+    int startIndex = batch * batchSize;
+    int endIndex = min(startIndex + batchSize, numSamples);
+
+    for (int i = startIndex; i < endIndex; i++) {
+      valuesArray.add(valuesBuffer[i]);
     }
 
-    // Serializa o JSON
+    // Serializa o JSON para uma string
     String jsonString;
-    serializeJson(jsonDocument, jsonString);
-
+    serializeJson(jsonDoc, jsonString);
     Serial.println(jsonString);
 
-    // Envia os dados
+    // Envia o JSON para o servidor
+    HTTPClient http;
+    http.begin(serverUrl);
     http.addHeader("Content-Type", "application/json");
-    int responseCode = http.POST(jsonString);
-    jsonString = "";
-    // Verifica a resposta HTTP
-    if (responseCode > 0) {
-      if (responseCode == HTTP_CODE_OK) {
-        Serial.println("Dados enviados com sucesso!");
-      } else {
-        Serial.println("Falha ao enviar dados. Código: " + String(responseCode));
+
+    int retryCount = 3;
+    int httpResponseCode = -1;
+
+    while (retryCount > 0) {
+      httpResponseCode = http.POST(jsonString);
+      if (httpResponseCode > 0) {
+        break;  // Sucesso, sair do loop de retentativa
       }
-    } else {
-      Serial.println("Erro na conexão: " + String(http.errorToString(responseCode).c_str()));
+      retryCount--;
+      delay(500);  // Aguarda antes de tentar novamente
     }
+
+    if (httpResponseCode > 0) {
+      Serial.print("Lote ");
+      Serial.print(batch + 1);
+      Serial.print(" enviado com sucesso! Resposta: ");
+      Serial.println(httpResponseCode);
+    } else {
+      Serial.print("Erro ao enviar lote ");
+      Serial.print(batch + 1);
+      Serial.print(": ");
+      Serial.println(httpResponseCode);
+    }
+
     http.end();
 
-  } else {
-    Serial.println("WiFi não está conectado.");
+    // Aguarda um pouco antes de enviar o próximo lote (opcional)
+    delay(100);
   }
 }
 
 void loop() {
-  // O loop principal não faz nada; as tarefas são executadas em paralelo
+  unsigned long startTime = micros();  // Marca o tempo inicial da coleta
+
+  // Coleta de 30 segundos
+  for (bufferIndex = 0; bufferIndex < numSamples; bufferIndex++) {
+    // Aguarda até o tempo correto para a próxima amostra
+    while (micros() - startTime < bufferIndex * sampleInterval) {
+      // Aguarda passivamente
+    }
+
+    // Lê o valor do ECG e converte para float
+    valuesBuffer[bufferIndex] = (float)analogRead(ECG_INPUT_PIN);
+  }
+
+  Serial.println("Coleta concluída! Enviando dados para o servidor...");
+
+  // Normaliza os valores do buffer
+  normalizeBuffer(valuesBuffer, numSamples);
+
+  // Envia os dados em lotes
+  sendDataToServer(valuesBuffer, numSamples);
+
+  Serial.println("Fim dos dados.");
+
+  while (1)
+    ;  // Para a execução do loop, pois a coleta já foi feita
 }

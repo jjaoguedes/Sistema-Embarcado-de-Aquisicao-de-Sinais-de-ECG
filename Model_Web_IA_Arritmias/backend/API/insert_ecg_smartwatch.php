@@ -1,7 +1,7 @@
 <?php
 $json = file_get_contents('php://input');
 
-$host = "localhost";
+$host = "10.224.1.28";
 $username = "root"; // Altere conforme necessário
 $password = "";     // Altere conforme necessário
 $database = "arritmias";
@@ -34,37 +34,26 @@ if (empty($measurements)) {
     echo json_encode(["error" => "No measurements provided"]);
     exit;
 }
-/*
-$sql = "START TRANSACTION;\n";
 
-foreach ($measurements as $measurement) {
-    $measurement_datetime = $measurement['datetime'];
-    $measurement_value = $measurement['value'];
-
-
-    $escaped_datetime = addslashes($measurement_datetime);
-    $escaped_value = addslashes($measurement_value);
-
-    $sql .= "INSERT INTO measurements (patient_id, datetime, value) VALUES ('$patient_id', '$escaped_datetime', '$escaped_value');\n";
-}
-
-$sql .= "COMMIT;";
-*/
 $conn->begin_transaction();
 $stmt = NULL;
 
 try {
-    $stmt = $conn->prepare("INSERT INTO ecg (id_patient, datetime, value) VALUES (?, ?, ?)");
+    // Adicionando a coluna type_collect na query de inserção
+    $stmt = $conn->prepare("INSERT INTO ecg (id_patient, start_datetime, value, type_collect) VALUES (?, ?, ?, ?)");
     
     if($stmt===false) {
         throw new Exception("Erro na preparação da query: ".$conn->error); 
     }
 
-    $stmt->bind_param("iss", $patient_id, $datetime, $value); 
+    // Adicionando o quarto parâmetro para type_collect
+    $stmt->bind_param("isss", $patient_id, $datetime, $value, $type_collect); 
 
     foreach($measurements as $measurement) {
-        $datetime=$measurement['datetime'];
-        $value=$measurement['value'];
+        $datetime = $measurement['datetime'];
+        $value = $measurement['value'];
+        $type_collect = "SMARTWATCH"; // Definindo o valor de type_collect como "SMARTWATCH"
+        
         if(!$stmt->execute()) {
             throw new Exception("Erro ao executar a query: ".$stmt->error); 
         } 

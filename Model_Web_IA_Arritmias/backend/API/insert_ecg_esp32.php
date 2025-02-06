@@ -1,94 +1,132 @@
 <?php
-// Lê os dados JSON enviados
-$json = file_get_contents('php://input');
-
 // Configurações do banco de dados
-$host = "localhost";
+$host = "10.224.1.28";
 $username = "root";
 $password = "";
 $database = "arritmias";
 
-// Valida o JSON recebido
+// Configura mysqli para lançar exceções
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+// Lê os dados JSON enviados
+$json = file_get_contents('php://input');
 $data = json_decode($json, true);
-if ($data === null) {
+
+// Valida o JSON recebido
+if ($data === null || !isset($data['id_patient']) || !isset($data['start_datetime']) || !isset($data['values'])) {
     http_response_code(400);
-    echo json_encode(["error" => "JSON inválido ou ausente"]);
+    echo json_encode(["error" => "JSON inválido ou campos obrigatórios ausentes"]);
     exit;
 }
 
-// Verifica campos obrigatórios
-if (
-    !isset($data['patient_id']) || !is_int($data['patient_id']) ||
-    !isset($data['measurements']['value']) || !is_array($data['measurements']['value'])
-) {
+// Mapeia os campos do ESP32 para os campos esperados
+$data['patient_id'] = $data['id_patient']; // Renomeia id_patient para patient_id
+$data['value'] = $data['values']; // Renomeia values para value
+
+// Validação do patient_id
+$patient_id = filter_var($data['patient_id'], FILTER_VALIDATE_INT);
+if ($patient_id === false) {
     http_response_code(400);
-    echo json_encode(["error" => "Dados ausentes ou inválidos"]);
+    echo json_encode(["error" => "ID do paciente inválido"]);
     exit;
 }
 
-$patient_id = $data['patient_id'];
-$values = $data['measurements']['value'];
+// Validação do start_datetime
+$start_datetime = $data['start_datetime'];
+if (strtotime($start_datetime) === false) {
+    http_response_code(400);
+    echo json_encode(["error" => "Data e hora de início inválidas"]);
+    exit;
+}
+
+// Validação dos valores de medição
+$values = array_filter($data['value'], function ($value) {
+    return is_numeric($value) && $value >= 0 && $value <= 2;
+});
+
+if (empty($values)) {
+    http_response_code(400);
+    echo json_encode(["error" => "Nenhum valor de medição fornecido ou valores fora do intervalo permitido [0, 2]"]);
+    exit;
+}
+
+// Tipo de coleta (pode ser dinâmico se necessário)
+$type_collect = $data['type_collect'] ?? "ESP32"; // Valor padrão "ESP32" se não fornecido
 
 // Conecta ao banco de dados
 try {
     $conn = new mysqli($host, $username, $password, $database);
-    if ($conn->connect_error) {
-        throw new Exception("Erro de conexão: " . $conn->connect_error);
-    }
-} catch (Exception $e) {
+} catch (mysqli_sql_exception $e) {
     http_response_code(500);
-    echo json_encode(["error" => "Erro ao conectar ao banco de dados: " . $e->getMessage()]);
+    echo json_encode(["error" => "Erro ao conectar ao banco de dados"]);
+    error_log("Erro ao conectar ao banco: " . $e->getMessage());
     exit;
 }
 
-// Inicia a transação
+// Inicia transação
 $conn->begin_transaction();
 $insertedCount = 0;
 
 try {
-    // Prepara os valores para inserção em lote
-    $valuesPlaceholders = [];
-    $valuesData = [];
-    foreach ($values as $value) {
-        if (is_numeric($value)) {  // Verifica se o valor é numérico
-            $valuesPlaceholders[] = "(?, ?)";
-            $valuesData[] = $patient_id;
-            $valuesData[] = $value;
+    // Tamanho do lote (ajustável conforme necessário)
+    $batchSize = 100; // Inserir 100 registros por lote
+    $batches = array_chunk($values, $batchSize);
+
+    foreach ($batches as $batch) {
+        // Prepara os dados para inserção
+        $dataToBind = [];
+        foreach ($batch as $value) {
+            $dataToBind[] = $start_datetime;
+            $dataToBind[] = $patient_id;
+            $dataToBind[] = floatval($value);
+            $dataToBind[] = $type_collect;
         }
-    }
 
-    if (empty($valuesPlaceholders)) {
-        throw new Exception("Nenhum dado válido para inserir");
-    }
+        // Monta a query com placeholders dinâmicos
+        $placeholders = implode(", ", array_fill(0, count($batch), "(?, ?, ?, ?)"));
+        $query = "INSERT INTO ecg (start_datetime, id_patient, value, type_collect) VALUES " . $placeholders;
 
-    // Monta a query de inserção em lote
-    $query = "INSERT INTO ecg (id_patient, value) VALUES " . implode(", ", $valuesPlaceholders);
-    $stmt = $conn->prepare($query);
-    if ($stmt === false) {
-        throw new Exception("Erro na preparação da query: " . $conn->error);
-    }
+        // Prepara a query
+        $stmt = $conn->prepare($query);
+        if (!$stmt) {
+            throw new Exception("Erro ao preparar a query: " . $conn->error);
+        }
 
-    // Define os tipos de dados para bind
-    $types = str_repeat("id", count($valuesData) / 2);
-    $stmt->bind_param($types, ...$valuesData);
+        // Define os tipos dinamicamente (i para inteiro, d para float, s para string)
+        $types = str_repeat("sids", count($batch));
 
-    // Executa a query
-    if ($stmt->execute()) {
-        $insertedCount = $stmt->affected_rows;
-        $conn->commit();
-        http_response_code(200);
-        echo json_encode(["message" => "Pacote recebido com sucesso", "inserted_count" => $insertedCount]);
-    } else {
-        throw new Exception("Erro ao executar a query: " . $stmt->error);
-    }
-} catch (Exception $e) {
-    $conn->rollback();
-    http_response_code(500);
-    echo json_encode(["error" => "Erro: " . $e->getMessage()]);
-} finally {
-    if (isset($stmt)) {
+        // Vincula os parâmetros
+        $stmt->bind_param($types, ...$dataToBind);
+
+        // Executa a query
+        if ($stmt->execute()) {
+            $insertedCount += $stmt->affected_rows;
+        } else {
+            throw new Exception("Erro ao executar a query: " . $stmt->error);
+        }
+
+        // Fecha o statement
         $stmt->close();
     }
-    $conn->close();
+
+    // Confirma transação se tudo estiver OK
+    $conn->commit();
+    http_response_code(200);
+    echo json_encode([
+        "message" => "Pacote recebido com sucesso",
+        "inserted_count" => $insertedCount,
+        "total_values" => count($values)
+    ]);
+} catch (Exception $e) {
+    // Rollback em caso de erro
+    $conn->rollback();
+    http_response_code(500);
+    echo json_encode(["error" => "Erro durante o processamento: " . $e->getMessage()]);
+    error_log("Erro durante o processamento: " . $e->getMessage());
+} finally {
+    // Fecha a conexão com o banco de dados
+    if (isset($conn)) {
+        $conn->close();
+    }
 }
 ?>

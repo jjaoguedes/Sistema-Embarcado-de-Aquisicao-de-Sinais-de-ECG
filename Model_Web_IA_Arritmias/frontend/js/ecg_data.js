@@ -155,7 +155,7 @@ function createIntervalListItem(index, startIndex, endIndex, intervalSize, onCli
 // Função para buscar e plotar dados do ECG (bruto ou filtrado)
 async function fetchAndPlotECG(patientId, showFiltered = false) {
     try {
-        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
+        const response = await fetch('http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ patient_id: patientId })
