@@ -5,6 +5,9 @@ const fetchButton = document.getElementById('fetch-ecg-btn');
 let totalexamsDiv = document.getElementById('total-exams-performed');
 let classifyButton = document.getElementById('classifyButton');
 let loadButton = document.getElementById('LoadButton');
+let smartwatchButton = document.getElementById('smartwatchButton');
+let esp32Button = document.getElementById('esp32Button');
+let type_collect = "";
 
 // Variável para armazenar o valor do contador
 let count = 0;
@@ -44,7 +47,8 @@ function onPatientChange() {
 
         // Limpa dados e elementos da interface
         clearECGData();
-        fetchAndPlotECG(selectedPatient, false);
+        type_collect = "";
+        //fetchAndPlotECG(selectedPatient, false);
     } else {
         alert('Por favor, selecione um paciente primeiro.');
 
@@ -135,7 +139,114 @@ filterButton.addEventListener('click', function (event) {
         clearECGData();
 
         // Inicio da Plotagem
-        fetchAndPlotECG(selectedPatient, true);
+        fetchAndPlotECG(selectedPatient, true, type_collect );
+    } else {
+        alert('Por favor, selecione um paciente primeiro.');
+
+        // Ocultar spinner
+        toggleElementVisibility('spinner', false);
+    }
+});
+
+// Adiciona o evento de clique ao botão
+smartwatchButton.addEventListener('click', function (event) {
+    const patientSelect = document.getElementById("patient-select");
+    const selectedPatient = patientSelect.value;
+    type_collect = "SMARTWATCH";
+
+    // Desabilita o botão
+    classifyButton.disabled = true;
+    // Variável para controle após desabilitar o botão
+    isButtonEnabled = false;
+    console.log(`Botão de classificação desabilitado!`);
+
+    if (selectedPatient) {
+        console.log(`Paciente ID ${selectedPatient} selecionado. Gráfico limpo. Gerando Plotagem do Intervalo.`);
+
+        // Limpa o contador de exams performed
+        count = 0;
+        totalexamsDiv.textContent = `${count}`; // Atualiza o texto do elemento
+
+        // Limpa a lista anterior e mostra o spinner
+        clearIntervalList();
+        toggleElementVisibility('spinner', true);
+
+        // Limpa dados e elementos da interface
+        clearECGData();
+
+        // Inicio da Plotagem
+        fetchAndPlotECG(selectedPatient, false, type_collect);
+    } else {
+        alert('Por favor, selecione um paciente primeiro.');
+
+        // Ocultar spinner
+        toggleElementVisibility('spinner', false);
+    }
+});
+
+// Adiciona o evento de clique ao botão
+esp32Button.addEventListener('click', function (event) {
+    const patientSelect = document.getElementById("patient-select");
+    const selectedPatient = patientSelect.value;
+    type_collect = "ESP32";
+
+    // Desabilita o botão
+    classifyButton.disabled = true;
+    // Variável para controle após desabilitar o botão
+    isButtonEnabled = false;
+    console.log(`Botão de classificação desabilitado!`);
+
+    if (selectedPatient) {
+        console.log(`Paciente ID ${selectedPatient} selecionado. Gráfico limpo. Gerando Plotagem do Intervalo.`);
+
+        // Limpa o contador de exams performed
+        count = 0;
+        totalexamsDiv.textContent = `${count}`; // Atualiza o texto do elemento
+
+        // Limpa a lista anterior e mostra o spinner
+        clearIntervalList();
+        toggleElementVisibility('spinner', true);
+
+        // Limpa dados e elementos da interface
+        clearECGData();
+
+        // Inicio da Plotagem
+        fetchAndPlotECG(selectedPatient, false, type_collect );
+    } else {
+        alert('Por favor, selecione um paciente primeiro.');
+
+        // Ocultar spinner
+        toggleElementVisibility('spinner', false);
+    }
+});
+
+// Adiciona o evento de clique ao botão
+esp32Button.addEventListener('click', function (event) {
+    const patientSelect = document.getElementById("patient-select");
+    const selectedPatient = patientSelect.value;
+
+    // Desabilita o botão
+    classifyButton.disabled = true;
+    // Variável para controle após desabilitar o botão
+    isButtonEnabled = false;
+    console.log(`Botão de classificação desabilitado!`);
+
+    if (selectedPatient) {
+        console.log(`Paciente ID ${selectedPatient} selecionado. Gráfico limpo. Gerando Plotagem do Intervalo.`);
+
+        // Limpa o contador de exams performed
+        count = 0;
+        totalexamsDiv.textContent = `${count}`; // Atualiza o texto do elemento
+
+        // Limpa a lista anterior e mostra o spinner
+        clearIntervalList();
+        toggleElementVisibility('spinner', true);
+
+        // Limpa dados e elementos da interface
+        clearECGData();
+
+        // Inicio da Plotagem
+        fetchAndPlotECG(selectedPatient, false, "ESP32");
     } else {
         alert('Por favor, selecione um paciente primeiro.');
 

@@ -20,7 +20,7 @@ try:
     # Converte os dados para um array NumPy
     array = np.array(numeric_value, dtype=float)
 
-    array = normalize_data(array)
+    #array = normalize_data(array)
 
     # Ajusta a forma do array para o modelo
     array = np.expand_dims(array, axis=-1)

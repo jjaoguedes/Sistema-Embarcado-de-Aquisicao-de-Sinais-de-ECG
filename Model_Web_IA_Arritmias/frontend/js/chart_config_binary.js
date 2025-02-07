@@ -11,7 +11,7 @@ const myDoughnutChart = new Chart(ctx_binary, {
                 'rgb(194, 36, 36)'  // Cor para "Anormal"
             ],
             borderColor: '#000000', // Cor das bordas
-            borderWidth: 0.5 // Largura da borda para destaque
+            borderWidth: 0 // Largura da borda para destaque
         }]
     },
     options: {

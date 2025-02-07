@@ -14,7 +14,7 @@ function createDoughnutChart(chartId, initialProbabilities, colors) {
                 data: [adjustedProbabilities[0], remainingValue], // Dados com diferença
                 backgroundColor: [colors, '#C0C0C0'], // A cor do gráfico e o restante (cinza)
                 borderColor: '#000000', // Cor da borda
-                borderWidth: 0.5 // Largura da borda para visibilidade
+                borderWidth: 0 // Largura da borda para visibilidade
             }]
         },
         options: {
