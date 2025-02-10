@@ -1,8 +1,10 @@
 #include <WiFi.h>  // Para ESP32
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
-
 #define ECG_INPUT_PIN A0
+#define LEAD_OFF_PIN_1 40
+#define LEAD_OFF_PIN_2 41
+
 
 const int sampleRate = 360;                 // Hz
 const int numSamples = 10800;               // 30 segundos de coleta (360 amostras/s * 30s)
@@ -13,14 +15,14 @@ float valuesBuffer[numSamples];
 size_t bufferIndex = 0;
 
 // Configurações de Wi-Fi
-const char* ssid = "WP3-CETELI-2-IA";
-const char* password = "RioNhamunda";
+const char* ssid = "CLARO_2GEA41ED";
+const char* password = "B8EA42ED";
 
 // Endereço do servidor
-const char* serverUrl = "http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/insert_ecg_esp32.php";
+const char* serverUrl = "http://192.168.0.121/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/insert_ecg_esp32.php";
 
 // ID do paciente (substitua pelo ID real)
-const String id_patient = "15";
+const String id_patient = "1";
 const int batchSize = 100;  // Tamanho do lote
 
 // Servidor NTP
@@ -29,9 +31,15 @@ const long gmtOffset_sec = -14400;
 const int daylightOffset_sec = 0;
 String datetime = "";
 
+void initPins() {
+  pinMode(LEAD_OFF_PIN_1, INPUT);
+  pinMode(LEAD_OFF_PIN_2, INPUT);
+}
+
 void setup() {
   Serial.begin(115200);
-  Serial.println("Iniciando coleta de ECG...");
+
+  initPins();
 
   // Conecta ao Wi-Fi
   WiFi.begin(ssid, password);
@@ -55,9 +63,8 @@ void setup() {
   // Inicio da coleta
   datetime = getDatetime();
   Serial.println("Datetime Inicial Armazendado");
-
+  Serial.println("Iniciando coleta...");
 }
-
 
 String getDatetime() {
   struct tm timeInfo;
@@ -67,26 +74,6 @@ String getDatetime() {
     return String(datetime);
   }
   return "Falha ao obter hora";
-}
-
-void normalizeBuffer(float valuesBuffer[], int numSamples) {
-  float minVal = valuesBuffer[0];
-  float maxVal = valuesBuffer[0];
-
-  // Encontra o valor mínimo e máximo no buffer
-  for (int i = 0; i < numSamples; i++) {
-    if (valuesBuffer[i] < minVal) {
-      minVal = valuesBuffer[i];
-    }
-    if (valuesBuffer[i] > maxVal) {
-      maxVal = valuesBuffer[i];
-    }
-  }
-
-  // Normaliza os valores para o intervalo [0, 1]
-  for (int i = 0; i < numSamples; i++) {
-    valuesBuffer[i] = (valuesBuffer[i] - minVal) / (maxVal - minVal);
-  }
 }
 
 void sendDataToServer(float valuesBuffer[], int numSamples) {
@@ -162,14 +149,20 @@ void loop() {
       // Aguarda passivamente
     }
 
-    // Lê o valor do ECG e converte para float
-    valuesBuffer[bufferIndex] = (float)analogRead(ECG_INPUT_PIN);
+    if (digitalRead(LEAD_OFF_PIN_1) || digitalRead(LEAD_OFF_PIN_2)) {
+      Serial.write('!');
+    } else {
+      // Lê o valor do ECG e converte para float
+      float ecgValue = (float)analogRead(ECG_INPUT_PIN);
+      Serial.println(ecgValue);
+      valuesBuffer[bufferIndex] = ecgValue;
+    }
   }
 
   Serial.println("Coleta concluída! Enviando dados para o servidor...");
 
   // Normaliza os valores do buffer
-  normalizeBuffer(valuesBuffer, numSamples);
+  //normalizeBuffer(valuesBuffer, numSamples);
 
   // Envia os dados em lotes
   sendDataToServer(valuesBuffer, numSamples);

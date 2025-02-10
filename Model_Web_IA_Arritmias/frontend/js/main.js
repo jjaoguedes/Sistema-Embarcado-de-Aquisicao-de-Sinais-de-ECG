@@ -7,6 +7,8 @@ let classifyButton = document.getElementById('classifyButton');
 let loadButton = document.getElementById('LoadButton');
 let smartwatchButton = document.getElementById('smartwatchButton');
 let esp32Button = document.getElementById('esp32Button');
+let mitbihButton = document.getElementById('mitbihButton');
+
 let type_collect = "";
 
 // Variável para armazenar o valor do contador
@@ -43,7 +45,7 @@ function onPatientChange() {
 
         // Limpa a lista anterior e mostra o spinner
         clearIntervalList();
-        toggleElementVisibility('spinner', true);
+        //toggleElementVisibility('spinner', true);
 
         // Limpa dados e elementos da interface
         clearECGData();
@@ -53,7 +55,7 @@ function onPatientChange() {
         alert('Por favor, selecione um paciente primeiro.');
 
         // Ocultar spinner
-        toggleElementVisibility('spinner', false);
+        //toggleElementVisibility('spinner', false);
     }
 }
 
@@ -139,7 +141,8 @@ filterButton.addEventListener('click', function (event) {
         clearECGData();
 
         // Inicio da Plotagem
-        fetchAndPlotECG(selectedPatient, true, type_collect );
+        fetchAndPlotECG(selectedPatient, true, type_collect);
+        alert('Dados filtrados!');
     } else {
         alert('Por favor, selecione um paciente primeiro.');
 
@@ -221,10 +224,10 @@ esp32Button.addEventListener('click', function (event) {
 });
 
 // Adiciona o evento de clique ao botão
-esp32Button.addEventListener('click', function (event) {
+mitbihButton.addEventListener('click', function (event) {
     const patientSelect = document.getElementById("patient-select");
     const selectedPatient = patientSelect.value;
-
+    type_collect = "MITBIH";
     // Desabilita o botão
     classifyButton.disabled = true;
     // Variável para controle após desabilitar o botão
@@ -246,7 +249,7 @@ esp32Button.addEventListener('click', function (event) {
         clearECGData();
 
         // Inicio da Plotagem
-        fetchAndPlotECG(selectedPatient, false, "ESP32");
+        fetchAndPlotECG(selectedPatient, false, type_collect);
     } else {
         alert('Por favor, selecione um paciente primeiro.');
 

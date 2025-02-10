@@ -13,7 +13,10 @@
     border: 1px solid #ccc;
     padding: 10px;
     box-sizing: border-box;
-    background-color: #fff;
+    background-color:#f8f9fc; /* Fundo levemente acinzentado */
+    border-radius: 8px;
+    margin-top: 10px; /* Adiciona espaçamento acima */
+
 }
 
 /* Estilo para os itens da lista */
@@ -26,29 +29,61 @@
     gap: 10px;
 }
 
+/* Ajuste nos itens da lista */
 #intervalList li {
-    padding: 10px 15px;
+    padding: 15px 15px;
+    font-size: 18px;
     background-color: #4e73df;
-    color: #fff;
+    color: white;
     border: 1px solid #4e73df;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: transform 0.2s ease, background-color 0.3s ease;
 
-    /* Centralização do texto */
     text-align: center;
 }
 
+/* Efeito ao passar o mouse */
 #intervalList li:hover {
     background-color: #2c55b4;
-    color: #fff;
+    transform: scale(1.05); /* Efeito de leve aumento */
 }
 
 /* Item ativo */
 #intervalList li.active {
     background-color: #1e3a8a;
-    color: #fff;
     border: 1px solid #1e3a8a;
+}
+
+/* Ajusta a posição dos botões */
+.button-container {
+    display: flex;
+    justify-content: space-between; /* Separa os botões à esquerda e o "Filter Data" à direita */
+    gap: 10px;
+    align-items: center;
+}
+
+/* Ajusta o botão "Filter Data" para a direita */
+#filterButton {
+    margin-left: auto; /* Empurra o botão para a direita */
+}
+
+
+.modal-content {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.interval-list-container {
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-dialog {
+    max-width: 600px;
+}
+
+.modal-body {
+    padding: 20px;
 }
 
 .custom-height {

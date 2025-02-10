@@ -293,7 +293,7 @@
                     </div>
 
                     <div class="d-flex align-items-center" style="gap: 10px; margin-left: 0px;">
-                      
+
                     </div>
 
                     <!-- Botão para Classify Data -->
@@ -310,35 +310,34 @@
               </div>
             </div>
 
-            <!-- Modal for Interval List -->
-            <div class="modal fade" id="intervalListModal" tabindex="-1" aria-labelledby="intervalListModalLabel" aria-hidden="true">
+            <div class="modal fade" id="intervalListModal" tabindex="-1" aria-labelledby="intervalListModalLabel"
+              aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 style="color: #181818;" class="modal-title text-dark" id="intervalListModalLabel">Interval List</h5>
+                    <h5 class="modal-title" style="color: black; font-size: 34px; font-weight: bold"  id="intervalListModalLabel">Interval List</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <h5 style="color: #181818;" class="modal-title text-dark" id="intervalListModalLabel">Select the collection type or Filter Data</h5>
-
-                    <button type="submit" class="btn btn-primary" id="smartwatchButton">Smartwatch</button>
-                    <button type="submit" class="btn btn-primary" id="esp32Button">Esp32</button>
-                    <button type="submit" class="btn btn-primary" id="mitbihButton">MIT-BIH</button>
-                    <button type="submit" class="btn btn-primary" id="filterButton">Filter Data</button>
-
-                    <div style="width: 100%; max-width: 100%;" class="interval-list-container">
-                      <ul style="column-gap: 1cap; color: #181818;" id="intervalList" class="list-group-item"></ul>
+                    <p class="title" style="color: black; font-size: 20px;">Select the collection type or Filter Data: </p>
+                    <div class="button-container">
+                      <button type="submit" class="btn btn-primary" id="esp32Button">ESP32</button>
+                      <button type="submit" class="btn btn-primary" id="mitbihButton">MIT-BIH</button>
+                      <button type="submit" class="btn btn-primary" id="smartwatchButton">SMARTWATCH</button>
+                      <button type="submit" class="btn btn-primary" id="filterButton">FILTER</button>
+                    </div>
+                    <hr>
+                    <div class="interval-list-container">
+                      <ul id="intervalList" class="list-group"></ul>
                       <div class="text-center">
                         <div class="spinner-border d-none" id="spinner"></div>
                       </div>
                     </div>
                   </div>
-                  <!-- <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  </div> -->
                 </div>
               </div>
             </div>
+
 
 
             <!-- Content Row -->
@@ -346,7 +345,8 @@
               <!-- Content Column -->
               <div class="col-lg-4 mb-4">
                 <!-- Illustrations -->
-                <div class="card shadow mb-4" style="height: auto; margin-left: auto; margin-right: 10px; margin-left: 10px;">
+                <div class="card shadow mb-4"
+                  style="height: auto; margin-left: auto; margin-right: 10px; margin-left: 10px;">
                   <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold" style="color: #181818;">Binary Classification</h6>
                   </div>
@@ -475,6 +475,7 @@
           </div>
         </div>
       </div>
+
 
       <!-- Bootstrap core JavaScript-->
       <script src="vendor/jquery/jquery.min.js"></script>

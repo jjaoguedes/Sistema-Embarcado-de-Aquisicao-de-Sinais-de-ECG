@@ -120,8 +120,13 @@ function plotECGInterval(intervalData, samplingRate, intervalIndex, intervalSize
     updateECG_Data(values, time);
 }
 
+let selectedIntervalIndex = null; // Armazena o índice do intervalo selecionado
+
+
 // Função auxiliar para criar itens de lista
 function createIntervalListItem(index, startIndex, endIndex, intervalSize, onClick) {
+    // Armazena o índice do intervalo selecionado
+    selectedIntervalIndex = index;
     const listItem = document.createElement('li');
     listItem.classList.add('interval-list-item'); // Classe CSS para estilo
 
@@ -155,7 +160,7 @@ function createIntervalListItem(index, startIndex, endIndex, intervalSize, onCli
 // Função para buscar e plotar dados do ECG (bruto ou filtrado)
 async function fetchAndPlotECG(patientId, showFiltered, type) {
     try {
-        const response = await fetch('http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
+        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ patient_id: patientId, type_collect: type })
@@ -198,19 +203,19 @@ async function fetchAndPlotECG(patientId, showFiltered, type) {
 
             ecgValues = normalizeData(ecgFIR); // Atualiza os valores para o sinal FIR filtrado
         }else if((showFiltered == true) && type == "ESP32"){
-            const ecgNorm = normalizeData(ecgValues);
+            //const ecgNorm = normalizeData(ecgValues);
 
             const lowcut = 0.5; // Frequência de corte inferior
             const highcut = 50; // Frequência de corte superior
             const targetFs = 360;  // Taxa de amostragem desejada
 
-            const filteredSignal = bandpassFilter(ecgNorm, lowcut, highcut, targetFs);
+            //const filteredSignal = bandpassFilter(ecgValues, lowcut, highcut, targetFs);
 
-            const filteredSignalNorm = normalizeData(filteredSignal);
+            //const filteredSignalNorm = normalizeData(filteredSignal);
 
             const FIR_COEFFICIENTS = [0.0001, 0.0005, 0.0020, 0.0050, 0.00, 0.0200, 0.0300, 0.0400, 0.0300, 0.0200, 0.00, 0.0050, 0.0001];
-            ecgValues = firFilter(filteredSignalNorm, FIR_COEFFICIENTS);
-            //ecgValues = normalizeData(ecgFIR); // Atualiza os valores para o sinal FIR filtrado
+            const ecgFIR = firFilter(ecgValues, FIR_COEFFICIENTS);
+            ecgValues = normalizeData(ecgFIR); // Atualiza os valores para o sinal FIR filtrado
         }else{
             console.log("Obtenção dos dados brutos!")
         }

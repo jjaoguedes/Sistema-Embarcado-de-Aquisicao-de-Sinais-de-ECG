@@ -1,6 +1,6 @@
 <?php
 // Configurações do banco de dados
-$host = "10.224.1.28";
+$host = "localhost";
 $username = "root";
 $password = "";
 $database = "arritmias";
@@ -41,7 +41,7 @@ if (strtotime($start_datetime) === false) {
 
 // Validação dos valores de medição
 $values = array_filter($data['value'], function ($value) {
-    return is_numeric($value) && $value >= 0 && $value <= 2;
+    return $value;
 });
 
 if (empty($values)) {
