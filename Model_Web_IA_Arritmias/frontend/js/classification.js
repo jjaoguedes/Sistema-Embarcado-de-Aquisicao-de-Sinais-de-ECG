@@ -85,7 +85,7 @@ async function classifyData(data) {
     const response = await fetch('http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/classify_samples.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ecgData: data }) // Enviar os dados como JSON
+      body: JSON.stringify({ ecgData: data, type_collect: "MITBIH" }) // Enviar os dados como JSON
     });
 
     if (!response.ok) {

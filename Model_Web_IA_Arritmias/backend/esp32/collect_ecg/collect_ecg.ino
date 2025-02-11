@@ -15,14 +15,14 @@ float valuesBuffer[numSamples];
 size_t bufferIndex = 0;
 
 // Configurações de Wi-Fi
-const char* ssid = "CLARO_2GEA41ED";
-const char* password = "B8EA42ED";
+const char* ssid = "WP3-CETELI-2-IA";
+const char* password = "RioNhamunda";
 
 // Endereço do servidor
-const char* serverUrl = "http://192.168.0.121/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/insert_ecg_esp32.php";
+const char* serverUrl = "http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/insert_ecg_esp32.php";
 
 // ID do paciente (substitua pelo ID real)
-const String id_patient = "1";
+const String id_patient = "14";
 const int batchSize = 100;  // Tamanho do lote
 
 // Servidor NTP

@@ -1,6 +1,6 @@
 <?php
 // Configurações do banco de dados
-$host = "localhost";
+$host = "10.224.1.28";
 $username = "root";
 $password = "";
 $database = "arritmias";

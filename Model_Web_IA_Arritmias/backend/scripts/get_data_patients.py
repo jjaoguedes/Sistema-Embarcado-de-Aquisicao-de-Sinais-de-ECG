@@ -5,14 +5,14 @@ from datetime import datetime  # Importar para manipulação de datas e horas
 
 # Variáveis do paciente, diretório do banco de dados pela wfdb, taxa de amostragem e id_patient do mySQL
 patient_code = '100'
-id_patient = 3
+id_patient = 1
 pn_dir = 'mitdb'
 sampling_rate = 360
 
 try:
     # Conectar ao MySQL
     connection = mysql.connector.connect(
-        host="localhost",
+        host="10.224.1.28",
         user="root",
         password="",
         database="arritmias",

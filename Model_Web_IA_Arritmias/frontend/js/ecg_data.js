@@ -39,21 +39,37 @@ function resampleSignal(data, originalFs, targetFs) {
     return resampledSignal;
 }
 
-// Filtro passa-banda (Butterworth)
+const DSP = require('dsp.js'); // Certifique-se de instalar a biblioteca DSP.js
+
 function bandpassFilter(data, lowcut, highcut, fs) {
     const nyquist = 0.5 * fs;
     const low = lowcut / nyquist;
     const high = highcut / nyquist;
 
-    // Simplificação do filtro usando média móvel (substituir por filtro DSP.js se disponível)
-    const filteredSignal = [];
-    for (let i = 1; i < data.length - 1; i++) {
-        const prev = data[i - 1];
-        const current = data[i];
-        const next = data[i + 1];
-        // Simulação do filtro (substituir por implementação precisa, ex: DSP.js)
-        filteredSignal.push(current * (high - low) + prev * low + next * high);
+    const filter = new DSP.BandpassFilter(low, high);
+    const filteredSignal = new Array(data.length);
+
+    for (let i = 0; i < data.length; i++) {
+        filteredSignal[i] = filter.singleStep(data[i]);
     }
+
+    return filteredSignal;
+}
+
+
+// Função para calcular o filtro mediano
+function medfilt(signal, kernelSize) {
+    const halfKernel = Math.floor(kernelSize / 2);
+    const filteredSignal = new Array(signal.length);
+
+    for (let i = 0; i < signal.length; i++) {
+        const start = Math.max(0, i - halfKernel);
+        const end = Math.min(signal.length, i + halfKernel + 1);
+        const window = signal.slice(start, end);
+        window.sort((a, b) => a - b);
+        filteredSignal[i] = window[Math.floor(window.length / 2)];
+    }
+
     return filteredSignal;
 }
 
@@ -160,7 +176,7 @@ function createIntervalListItem(index, startIndex, endIndex, intervalSize, onCli
 // Função para buscar e plotar dados do ECG (bruto ou filtrado)
 async function fetchAndPlotECG(patientId, showFiltered, type) {
     try {
-        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
+        const response = await fetch('http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ patient_id: patientId, type_collect: type })
@@ -186,36 +202,44 @@ async function fetchAndPlotECG(patientId, showFiltered, type) {
         // Processamento adicional se for solicitado sinal filtrado
         if ((showFiltered == true) && type == "SMARTWATCH") {
             console.log("Aplicando filtragem no sinal...");
+            
             const ecgNorm = normalizeData(ecgValues);
 
             const originalFs = 500; // Taxa de amostragem original
             const targetFs = 360;  // Taxa de amostragem desejada
             const resampledEcg = resampleSignal(ecgNorm, originalFs, targetFs);
 
-            const lowcut = 0.5; // Frequência de corte inferior
+            //Median Filter Start
+            const kernel_size = 61;
+            const median_filter = medfilt(resampledEcg, kernel_size);
+            const signal_correction = resampledEcg.map((value, index) => value - median_filter[index]);
+            //Median Filter End
+
+            const lowcut = 0.3; // Frequência de corte inferior
             const highcut = 50; // Frequência de corte superior
-            const filteredSignal = bandpassFilter(resampledEcg, lowcut, highcut, targetFs);
+            const filteredSignal = bandpassFilter(signal_correction, lowcut, highcut, targetFs);
 
-            const filteredSignalNorm = normalizeData(filteredSignal);
+            //const FIR_COEFFICIENTS = [0.0001, 0.0005, 0.0020, 0.0050, 0.00, 0.0200, 0.0300, 0.0400, 0.0300, 0.0200, 0.00, 0.0050, 0.0001];
+            //const ecgFIR = firFilter(filteredSignal, FIR_COEFFICIENTS);
 
-            const FIR_COEFFICIENTS = [0.0001, 0.0005, 0.0020, 0.0050, 0.00, 0.0200, 0.0300, 0.0400, 0.0300, 0.0200, 0.00, 0.0050, 0.0001];
-            const ecgFIR = firFilter(filteredSignalNorm, FIR_COEFFICIENTS);
+            ecgValues = normalizeData(filteredSignal); // Atualiza os valores para o sinal FIR filtrado
 
-            ecgValues = normalizeData(ecgFIR); // Atualiza os valores para o sinal FIR filtrado
         }else if((showFiltered == true) && type == "ESP32"){
-            //const ecgNorm = normalizeData(ecgValues);
 
-            const lowcut = 0.5; // Frequência de corte inferior
-            const highcut = 50; // Frequência de corte superior
             const targetFs = 360;  // Taxa de amostragem desejada
 
-            //const filteredSignal = bandpassFilter(ecgValues, lowcut, highcut, targetFs);
+            //Median Filter Start
+            const kernel_size = 61;
+            const median_filter = medfilt(ecgValues, kernel_size);
+            const signal_correction = ecgValues.map((value, index) => value - median_filter[index]);
+            //Median Filter End
 
-            //const filteredSignalNorm = normalizeData(filteredSignal);
+            const lowcut = 0.3; // Frequência de corte inferior
+            const highcut = 50; // Frequência de corte superior
+            const filteredSignal = bandpassFilter(signal_correction, lowcut, highcut, targetFs);
 
-            const FIR_COEFFICIENTS = [0.0001, 0.0005, 0.0020, 0.0050, 0.00, 0.0200, 0.0300, 0.0400, 0.0300, 0.0200, 0.00, 0.0050, 0.0001];
-            const ecgFIR = firFilter(ecgValues, FIR_COEFFICIENTS);
-            ecgValues = normalizeData(ecgFIR); // Atualiza os valores para o sinal FIR filtrado
+            ecgValues = normalizeData(filteredSignal); // Atualiza os valores para o sinal FIR filtrado
+
         }else{
             console.log("Obtenção dos dados brutos!")
         }
