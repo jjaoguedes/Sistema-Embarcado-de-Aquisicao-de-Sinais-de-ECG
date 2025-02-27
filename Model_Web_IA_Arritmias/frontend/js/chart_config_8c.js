@@ -52,7 +52,7 @@ function createDoughnutChart(chartId, initialProbabilities, colors) {
                     display: true,
                     text: `${adjustedProbabilities[0]}%`, // Mostra o primeiro valor como exemplo
                     font: {
-                        size: '16',
+                        size: '12',
                         weight: 'bold',
                         family: "'Arial', sans-serif"
                     },

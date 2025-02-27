@@ -1,7 +1,7 @@
 <?php
 $json = file_get_contents('php://input');
 
-$host = "localhost";
+$host = "10.224.1.28";
 $username = "root"; // Altere conforme necessário
 $password = "";     // Altere conforme necessário
 $database = "arritmias";
@@ -71,4 +71,6 @@ finally{
     $stmt->close();
     $conn->close(); 
 }
+
+
 ?>

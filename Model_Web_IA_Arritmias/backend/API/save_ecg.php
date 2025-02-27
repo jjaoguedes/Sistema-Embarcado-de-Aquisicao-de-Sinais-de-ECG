@@ -21,11 +21,11 @@ try {
 
         // Caminhos dos scripts Python e executável
         $python_script = "C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/scripts/filterData.py";
-        $python_executable = "C:/Users/jvito/AppData/Local/Programs/Python/Python311/python.exe";
+        $python_executable = "C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/python.exe";
 
         // Função para executar o script Python
         function execute_python_script($python_executable, $python_script, $temp_file) {
-            $command = 'set PYTHONPATH=C:/Users/jvito/AppData/Local/Programs/Python/Python311/Lib/site-packages && '
+            $command = 'set PYTHONPATH=C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/Lib/site-packages && '
                      . escapeshellcmd($python_executable)
                      . " " . escapeshellarg($python_script)
                      . " " . escapeshellarg($temp_file);

@@ -2,26 +2,14 @@ import sys
 import json
 import tensorflow as tf
 import numpy as np
-from scipy import signal
+
+# Lê os dados da entrada
+temp_file_path = sys.argv[1]
 
 def normalize_data(data):
     min_val = np.min(data)
     max_val = np.max(data)
     return (data - min_val) / (max_val - min_val) if max_val > min_val else data
-
-def bandpass_filter(data, lowcut, highcut, fs, order=1):
-    nyquist = 0.5 * fs
-    low = lowcut / nyquist
-    high = highcut / nyquist
-    b, a = signal.butter(order, [low, high], btype='band')
-    return signal.filtfilt(b, a, data)
-
-def moving_average(data, window_size):
-    window = np.ones(window_size) / window_size
-    return np.convolve(data, window, mode='same')
-
-# Lê os dados da entrada
-temp_file_path = sys.argv[1]
 
 try:
     with open(temp_file_path, 'r') as file:
@@ -36,6 +24,7 @@ try:
     array = np.expand_dims(array, axis=-1)
     array = np.expand_dims(array, axis=0)
 
+    array = normalize_data(array)
     # Tenta carregar o modelo
     try:
         model = tf.keras.models.load_model("C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/models/Conv_1D_8c.h5")

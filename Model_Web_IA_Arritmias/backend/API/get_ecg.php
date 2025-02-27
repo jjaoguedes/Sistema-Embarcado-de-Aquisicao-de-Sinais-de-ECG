@@ -19,7 +19,7 @@ if (empty($type_collect)) {
 }
 
 // Configurações do banco de dados
-$host = "localhost";
+$host = "10.224.1.28";
 $username = "root"; // Altere conforme necessário
 $password = "";     // Altere conforme necessário
 $database = "arritmias";

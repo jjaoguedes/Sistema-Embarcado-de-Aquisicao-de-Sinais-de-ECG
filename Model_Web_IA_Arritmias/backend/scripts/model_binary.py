@@ -6,6 +6,11 @@ import numpy as np
 # Lê os dados da entrada
 temp_file_path = sys.argv[1]
 
+def normalize_data(data):
+    min_val = np.min(data)
+    max_val = np.max(data)
+    return (data - min_val) / (max_val - min_val) if max_val > min_val else data
+
 try:
     with open(temp_file_path, 'r') as file:
         data = json.load(file)
@@ -18,6 +23,8 @@ try:
     # Ajusta a forma do array para o modelo
     array = np.expand_dims(array, axis=-1)
     array = np.expand_dims(array, axis=0)
+
+    array = normalize_data(array)
 
     # Tenta carregar o modelo
     try:

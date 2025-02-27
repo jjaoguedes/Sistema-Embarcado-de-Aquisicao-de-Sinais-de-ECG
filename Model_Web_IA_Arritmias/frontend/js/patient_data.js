@@ -8,7 +8,7 @@ async function loadPatients() {
     patientSelect = document.getElementById('patient-select');
 
     try {
-        const response = await fetch('http://localhost/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_patients.php'); // Endpoint correto
+        const response = await fetch('http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_patients.php'); // Endpoint correto
         if (!response.ok) {
             throw new Error('Erro ao carregar pacientes.');
         }

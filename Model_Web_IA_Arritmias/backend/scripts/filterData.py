@@ -9,16 +9,21 @@ def normalize_data(data):
     max_val = np.max(data)
     return (data - min_val) / (max_val - min_val) if max_val > min_val else data
 
-def bandpass_filter(data, lowcut, highcut, fs, order=1):
+# Função para aplicar um filtro passa-banda
+def bandpass_filter(ecg_data, fs, lowcut=0.5, highcut=40.0):
     nyquist = 0.5 * fs
     low = lowcut / nyquist
     high = highcut / nyquist
-    b, a = signal.butter(order, [low, high], btype='band')
-    return signal.filtfilt(b, a, data)
+    b, a = signal.butter(2, [low, high], btype="band")
+    return signal.filtfilt(b, a, ecg_data)
 
-def moving_average(data, window_size):
-    window = np.ones(window_size) / window_size
-    return np.convolve(data, window, mode='same')
+# Função para pré-processar o sinal
+def preprocess_signal(signal_data, fs):
+    filtered_signal = bandpass_filter(signal_data, fs)
+    notch_freq = 60
+    b_notch, a_notch = signal.iirnotch(notch_freq, 30, fs)
+    filtered_signal_notch = signal.filtfilt(b_notch, a_notch, filtered_signal)
+    return normalize_data(filtered_signal_notch)
 
 # Lê os dados da entrada
 temp_file_path = sys.argv[1]
@@ -32,21 +37,13 @@ try:
     # Converte os dados para um array NumPy
     array = np.array(numeric_value, dtype=float)
 
-    # Parâmetros do filtro passa-banda
-    fs = 360  # Frequência de amostragem (ajuste conforme seu caso)
-    lowcut = 0.5  # Limite inferior da banda de passagem
-    highcut = 40.0  # Limite superior da banda de passagem
+    fs = 360
 
-    # Aplica o filtro passa-banda ao sinal
-    filtered_array = bandpass_filter(array, lowcut, highcut, fs)
-
-    # Aplicar média móvel para suavizar o sinal
-    window_size = 10 # Tamanho da janela
-    smoothed_signal = moving_average(filtered_array, window_size)
+    signal_ecg_processed = preprocess_signal(array, fs)
 
     # Normaliza os dados filtrados
-    normalized_array = normalize_data(smoothed_signal)
-    
+    normalized_array = signal_ecg_processed
+
     # Converte prediction para lista para compatibilidade com JSON
     normalized_array_list = normalized_array.tolist()
 
