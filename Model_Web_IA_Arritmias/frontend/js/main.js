@@ -298,4 +298,5 @@ modal.addEventListener("hidden.bs.modal", () => {
 // Inicialização ao carregar a página
 window.onload = () => {
     loadPatients(); // Função definida em patient_data.js
+    
 };
