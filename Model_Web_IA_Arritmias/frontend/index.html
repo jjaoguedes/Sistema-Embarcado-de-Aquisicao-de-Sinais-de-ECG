@@ -107,25 +107,23 @@
             <i class="fa fa-bars"></i>
           </button>
 
-          <div class="d-flex align-items-center">
-            <!-- Topbar SVG Icon CETELI-->
-            <div class="mr-4"> <!-- Ajuste o 'mr-4' para a distância desejada -->
+          <div class="d-flex justify-content-center align-items-center" style="gap: 20px;">
+            <!-- Topbar SVG Icon CETELI -->
+            <div>
               <img src="img/logo_ceteli.svg" width="300">
             </div>
-
-            <!-- Topbar SVG Icon SUPER-->
+          
+            <!-- Topbar SVG Icon SUPER -->
             <div>
               <img src="img/logo_super.svg" width="250">
             </div>
-
-             <!-- Topbar SVG Icon SUPER-->
-             <div>
+          
+            <!-- Topbar SVG Icon UFAM -->
+            <div>
               <img src="img/ufam.svg" width="60">
             </div>
           </div>
-
-
-
+          
 
           <!-- Topbar Navbar -->
           <ul class="navbar-nav ml-auto">
@@ -167,7 +165,7 @@
         <!-- End of Topbar -->
 
         <!-- Begin Page Content -->
-        <div class="container-fluid">
+        <div class="container-fluid" >
 
           <!-- Page Heading -->
           <div class="accordion" id="accordionPanelsStayOpenExample" style="margin-top: -26px; margin-left: 0px;">
@@ -184,13 +182,13 @@
                 <div class="row">
 
                   <!-- Earnings (Monthly) Card Example -->
-                  <div class="col-xl-3 col-md-6 mb-4" style="height: 95px; margin-top: -10px;">
+                  <div class="col-xl-3 col-md-6 mb-4" style="height: 70px; margin-top: -10px;">
                     <div class="card border-left-primary shadow h-100 py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
-                              style="color: #181818;">
+                              style="color: #181818; margin-top: -20px;">
                               Total Patients
                             </div>
                             <div id="total-patients" class="h2 mb-0 font-weight-bold" style="color: #181818;">0</div>
@@ -204,12 +202,12 @@
                   </div>
 
                   <!-- Earnings (Monthly) Card Example -->
-                  <div class="col-xl-3 col-md-6 mb-4" style="height: 95px; margin-top: -10px;">
+                  <div class="col-xl-3 col-md-6 mb-4" style="height: 70px; margin-top: -10px;">
                     <div class="card border-left-success shadow h-100 py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1" style="margin-top: -20px;">
                               Exams Performed</div>
                             <div id="total-exams-performed" class="h2 mb-0 font-weight-bold" style="color: #181818;">0
                             </div>
@@ -223,12 +221,12 @@
                   </div>
 
                   <!-- Earnings (Monthly) Card Example -->
-                  <div class="col-xl-3 col-md-6 mb-4" style="height: 95px; margin-top: -10px;">
+                  <div class="col-xl-3 col-md-6 mb-4" style="height: 70px; margin-top: -10px;">
                     <div class="card border-left-info shadow h-100 py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Model Accuracy - Binary
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1" style="margin-top: -20px;">Model Accuracy - Binary
                             </div>
                             <div class="row no-gutters align-items-center">
                               <div class="col-auto">
@@ -245,12 +243,12 @@
                   </div>
 
                   <!-- Pending Requests Card Example -->
-                  <div class="col-xl-3 col-md-6 mb-4" style="height: 95px; margin-top: -10px;">
+                  <div class="col-xl-3 col-md-6 mb-4" style="height: 70px; margin-top: -10px;">
                     <div class="card border-left-info shadow h-100 py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Model Accuracy -
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1" style="margin-top: -20px;">Model Accuracy -
                               Multiclass
                             </div>
                             <div class="row no-gutters align-items-center">
@@ -275,7 +273,7 @@
           <div class="row">
             <!-- Area Chart -->
             <div class="col-xl-12 col-lg-0">
-              <div class="card shadow mb-4" style="margin-top: -14px;">
+              <div class="card shadow mb-4" style="margin-top: -16px;">
 
 
                 <!-- Card Header - Dropdown -->
@@ -349,12 +347,10 @@
               </div>
             </div>
 
-
-
             <div class="row">
               <!-- Primeiro Card (Binary Classification) -->
               <div class="col-12 col-md-6 col-lg-4 mb-4">
-                <div class="card shadow mb-4" style="height: auto; margin-left: 10px; margin-right: -20px; ;margin-top: -20px;">
+                <div class="card shadow mb-4" style="height: auto; margin-left: 10px; margin-right: -20px; margin-top: -20px;">
                   <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold" style="color: #181818;">Binary Classification</h6>
                   </div>
@@ -365,9 +361,9 @@
                         <div class="spinner-border d-none" id="SpinnerBinaryClassification"></div>
                       </div>
                     </div>
-                    <p class="text-dark" style="text-align: justify;">A threshold of 0.5 has been set for
-                      classification. If the probability of
-                      "Abnormal" is greater than or equal to 0.5, the signal is classified as Abnormal. Otherwise, the
+                    <p class="text-dark" style="text-align: center; margin-top: 0;">
+                      A threshold of 0.5 has been set for classification. If the probability of "Abnormal" is 
+                      greater than or equal to 0.5, the signal is classified as Abnormal. Otherwise, the
                       signal is classified as Normal.</p>
                   </div>
                 </div>
@@ -383,54 +379,57 @@
                     <div class="container">
                       <!-- Primeira linha de gráficos -->
                       <div class="row text-center">
-                        <div class="col-6 col-md-3 d-flex flex-column align-items-center">
+                        <div class="col-6 col-md-3 d-flex flex-column align-items-center" style="margin-top: -30px;">
                           <canvas id="DoughnutChart_8c_0" width="120" height="120"></canvas>
                           <p class="chart-label" style="color: #181818;">Normal Beat</p>
                         </div>
-                        <div class="col-6 col-md-3 d-flex flex-column align-items-center">
+                        <div class="col-6 col-md-3 d-flex flex-column align-items-center" style="margin-top: -30px;">
                           <canvas id="DoughnutChart_8c_1" width="120" height="120"></canvas>
                           <p class="chart-label" style="color: #181818;">Atrial Premature Contraction</p>
                         </div>
-                        <div class="col-6 col-md-3 d-flex flex-column align-items-center">
+                        <div class="col-6 col-md-3 d-flex flex-column align-items-center" style="margin-top: -30px;">
                           <canvas id="DoughnutChart_8c_2" width="120" height="120"></canvas>
                           <p class="chart-label" style="color: #181818;">Ventricular Escape Beat</p>
                         </div>
-                        <div class="col-6 col-md-3 d-flex flex-column align-items-center">
+                        <div class="col-6 col-md-3 d-flex flex-column align-items-center" style="margin-top: -30px;">
                           <canvas id="DoughnutChart_8c_3" width="120" height="120"></canvas>
                           <p class="chart-label" style="color: #181818;">Left Bundle Branch Block Beat</p>
                         </div>
                       </div>
 
                       <!-- Segunda linha de gráficos -->
-                      <div class="row text-center mt-4">
-                        <div class="col-6 col-md-3 d-flex flex-column align-items-center">
+                      <div class="row text-center mt-4" >
+                        <div class="col-6 col-md-3 d-flex flex-column align-items-center" style="margin-top: -60px;">
                           <canvas id="DoughnutChart_8c_4" width="120" height="120"></canvas>
                           <p class="chart-label" style="color: #181818;">Right Bundle Branch Block Beat</p>
                         </div>
-                        <div class="col-6 col-md-3 d-flex flex-column align-items-center">
+                        <div class="col-6 col-md-3 d-flex flex-column align-items-center" style="margin-top: -60px;">
                           <canvas id="DoughnutChart_8c_5" width="120" height="120"></canvas>
                           <p class="chart-label" style="color: #181818;">Premature Ventricular Contraction</p>
                         </div>
-                        <div class="col-6 col-md-3 d-flex flex-column align-items-center">
+                        <div class="col-6 col-md-3 d-flex flex-column align-items-center" style="margin-top: -60px;">
                           <canvas id="DoughnutChart_8c_6" width="120" height="120"></canvas>
                           <p class="chart-label" style="color: #181818;">Ventricular Flutter Wave</p>
                         </div>
-                        <div class="col-6 col-md-3 d-flex flex-column align-items-center">
+                        <div class="col-6 col-md-3 d-flex flex-column align-items-center" style="margin-top: -60px;">
                           <canvas id="DoughnutChart_8c_7" width="120" height="120"></canvas>
                           <p class="chart-label" style="color: #181818;">Paced Beat</p>
                         </div>
                       </div>
                     </div>
 
-                    <div class="d-flex justify-content-center mt-4 d-none">
-                      <div class="spinner-border d-none" id="SpinnerEightClassification"></div>
+                    <div class="d-flex flex-column align-items-center mt-3">
+                      <!-- Spinner -->
+                      <div class="spinner-border d-none" id="SpinnerEightClassification" style="margin-bottom: 10px;"></div>
+                    
+                      <!-- Texto -->
+                      <p class="text-dark" style="text-align: center; margin-top: 0;">
+                        The model uses the Softmax function to calculate the probabilities, ensuring
+                        that the total sum is equal to 1. The class with the highest probability is selected as the
+                        classification result.
+                      </p>
                     </div>
-
-                    <p class="text-dark mt-4" style="text-align: justify;">
-                      The model uses the Softmax function to calculate the probabilities, ensuring
-                      that the total sum is equal to 1. The class with the highest probability is selected as the
-                      classification result.
-                    </p>
+                    
                   </div>
                 </div>
               </div>
@@ -444,10 +443,10 @@
         <!-- End of Main Content -->
 
         <!-- Footer -->
-        <footer class="sticky-footer">
+        <footer class="sticky-footer" style="margin-top: -70px;">
           <div class="container my-auto">
             <div class="copyright text-center my-auto">
-              <span>Copyright &copy; AI rythmia 2021</span>
+              <span>Copyright &copy; AI rythmia 2025</span>
             </div>
           </div>
         </footer>

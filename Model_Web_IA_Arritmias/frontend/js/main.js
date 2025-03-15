@@ -295,6 +295,13 @@ modal.addEventListener("hidden.bs.modal", () => {
     modal.setAttribute("aria-hidden", "defined");
 });
 
+document.addEventListener("DOMContentLoaded", function() {
+    // Seleciona o botão pelo ID
+    const button = document.getElementById("sidebarToggle");
+    
+    // Simula o clique no botão
+    button.click();
+  });  
 // Inicialização ao carregar a página
 window.onload = () => {
     loadPatients(); // Função definida em patient_data.js
