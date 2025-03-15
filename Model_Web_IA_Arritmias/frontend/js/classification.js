@@ -82,7 +82,7 @@ function updateBinaryClassification(className, probability) {
 // Função para enviar os dados ao servidor PHP
 async function classifyData(data) {
   try {
-    const response = await fetch('http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/classify_samples.php', {
+    const response = await fetch(`http://${host}/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/classify_samples.php`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ecgData: data}) // Enviar os dados como JSON

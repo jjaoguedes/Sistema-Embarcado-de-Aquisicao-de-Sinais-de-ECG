@@ -121,7 +121,7 @@ function createIntervalListItem(index, startIndex, endIndex, intervalSize, onCli
 // Função para enviar ECG reamostrado para o servidor
 async function sendResampledECG(resampledEcg) {
     try {
-        const response = await fetch('http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/save_ecg.php', {
+        const response = await fetch(`http://${host}/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/save_ecg.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ecgValues: resampledEcg })
@@ -146,7 +146,7 @@ async function sendResampledECG(resampledEcg) {
 // Função para buscar e plotar dados do ECG (bruto ou filtrado)
 async function fetchAndPlotECG(patientId, showFiltered, type) {
     try {
-        const response = await fetch('http://10.224.1.28/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php', {
+        const response = await fetch(`http://${host}/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/API/get_ecg.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ patient_id: patientId, type_collect: type })
