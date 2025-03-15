@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json');
+require_once 'config.php';
 
 // Receber e decodificar o corpo da requisição
 $data = json_decode(file_get_contents('php://input'), true);
@@ -19,7 +20,6 @@ if (empty($type_collect)) {
 }
 
 // Configurações do banco de dados
-$host = "10.224.1.28";
 $username = "root"; // Altere conforme necessário
 $password = "";     // Altere conforme necessário
 $database = "arritmias";

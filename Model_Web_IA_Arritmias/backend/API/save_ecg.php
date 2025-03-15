@@ -3,6 +3,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
+require_once 'config.php';
 
 // Lê o corpo da requisição (JSON enviado pelo fetch)
 $input = json_decode(file_get_contents('php://input'), true);
@@ -21,14 +22,13 @@ try {
 
         // Caminhos dos scripts Python e executável
         $python_script = "C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/scripts/filterData.py";
-        $python_executable = "C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/python.exe";
 
         // Função para executar o script Python
-        function execute_python_script($python_executable, $python_script, $temp_file) {
-            $command = 'set PYTHONPATH=C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/Lib/site-packages && '
-                     . escapeshellcmd($python_executable)
-                     . " " . escapeshellarg($python_script)
-                     . " " . escapeshellarg($temp_file);
+        function execute_python_script($python_script, $temp_file) {
+            $command = 'set PYTHONPATH=' . PYTHON_PATH . ' && '
+             . escapeshellcmd(PYTHON_EXECUTABLE)
+             . " " . escapeshellarg($python_script)
+             . " " . escapeshellarg($temp_file);
 
             $output = shell_exec($command . " 2>&1");
             
@@ -38,7 +38,7 @@ try {
         }
 
         // Executar o script Python e obter os dados processados
-        $processed_data = execute_python_script($python_executable, $python_script, $temp_file);
+        $processed_data = execute_python_script($python_script, $temp_file);
         file_put_contents('php://stderr', print_r($processed_data, true));
 
         

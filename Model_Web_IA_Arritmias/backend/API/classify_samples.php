@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json');
+require_once 'config.php';
 
 // Lê o corpo da requisição (JSON enviado pelo fetch)
 $request_body = file_get_contents('php://input');
@@ -18,14 +19,13 @@ file_put_contents($temp_file, $data_json);
 // Caminhos para os scripts Python e modelos
 $python_script_cb = "C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/scripts/model_binary.py";
 $python_script_8c = "C:/xampp/htdocs/Sistema-Embarcado-de-Aquisicao-de-Sinais-de-ECG/Model_Web_IA_Arritmias/backend/scripts/model_eight_classes.py";
-$python_executable = "C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/python.exe";
 
 // Função para executar o script Python com diferentes modelos
-function execute_python_script($python_executable, $python_script, $temp_file) {
-    $command = 'set PYTHONPATH=C:/Users/ALUNO/AppData/Local/Programs/Python/Python311/Lib/site-packages && '
-             . escapeshellcmd($python_executable)
-             . " " . escapeshellarg($python_script)
-             . " " . escapeshellarg($temp_file);
+function execute_python_script($python_script, $temp_file) {
+    $command = 'set PYTHONPATH=' . PYTHON_PATH . ' && '
+    . escapeshellcmd(PYTHON_EXECUTABLE)
+    . " " . escapeshellarg($python_script)
+    . " " . escapeshellarg($temp_file);
 
     $output = shell_exec($command . " 2>&1");
     //file_put_contents('php://stderr', print_r($output, true));
@@ -43,8 +43,8 @@ function convert_to_percentages($probabilities) {
 }
 
 // Executa os dois modelos e processa os resultados
-$response_binary = execute_python_script($python_executable, $python_script_cb, $temp_file);
-$response_multi = execute_python_script($python_executable, $python_script_8c, $temp_file);
+$response_binary = execute_python_script($python_script_cb, $temp_file);
+$response_multi = execute_python_script($python_script_8c, $temp_file);
 
 // Consolida os resultados
 $response = [
